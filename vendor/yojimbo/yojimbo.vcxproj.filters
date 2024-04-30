@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{76FF3A1C-62A1-65F2-4B5C-7946379DEC42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\yojimbo.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_adapter.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_address.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_allocator.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_base_client.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_base_server.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_bit_array.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_channel.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_client.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_client_interface.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_connection.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_constants.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_message.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_network_info.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_network_simulator.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_platform.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_queue.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_reliable_ordered_channel.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_sequence_buffer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_serialize.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_server.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_server_interface.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_unreliable_unordered_channel.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\yojimbo_utils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\yojimbo.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_address.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_allocator.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_base_client.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_base_server.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_channel.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_client.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_connection.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_network_simulator.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_platform.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_reliable_ordered_channel.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_server.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_unreliable_unordered_channel.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\yojimbo_utils.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

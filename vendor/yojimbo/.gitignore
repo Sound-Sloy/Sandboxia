@@ -1,12 +1,12 @@
 # Visual Studio
-*.db
-*.opendb
-*.vcproj
-*.vcxproj
-*.vcxproj.user
-*.vcxproj.filter
-*.vcxproj.filters
-*.sln
+# *.db
+# *.opendb
+# *.vcproj
+# *.vcxproj
+# *.vcxproj.user
+# *.vcxproj.filter
+# *.vcxproj.filters
+# *.sln
 
 # Makefiles
 Makefile
