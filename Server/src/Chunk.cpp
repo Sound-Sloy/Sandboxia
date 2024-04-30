@@ -1,11 +1,11 @@
 #include "Chunk.h"
 
 void Chunk::SetBlock(Vec3<uint16_t> blockPos, Block block) {
-
+	m_Blocks[GetBlockIndexInChunk(blockPos)] = block;
 }
 
 Block Chunk::GetBlock(Vec3<uint16_t> blockPos) const {
-
+	return m_Blocks[GetBlockIndexInChunk(blockPos)];
 }
 
 void Chunk::SetPos(Vec2<int32_t> pos) {

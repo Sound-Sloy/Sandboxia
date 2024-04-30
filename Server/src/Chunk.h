@@ -6,9 +6,9 @@
 #include "Vec2.h"
 #include "Vec3.h"
 
-#define CHUNK_VOLUME (32*256*32)
-#define CHUNK_SIZE_VEC3 Vec3(32,256,32)
-#define CHUNK_SIZE_VEC3_I64 Vec3<int64_t>(32,256,32)
+#define CHUNK_VOLUME (32*32*32)
+#define CHUNK_SIZE_VEC3 Vec3(32,32,32)
+#define CHUNK_SIZE_VEC3_I64 Vec3<int64_t>(32,32,32)
 #define REGION_SIZE_CHUNKS_AXIS 32
 
 class Chunk {
@@ -23,7 +23,16 @@ public:
 	constexpr static Vec3<uint16_t> GetBlockPosInChunk(Vec3<int64_t> blockPos);
 
 	constexpr inline Vec2<int32_t> GetRegion() const;
+
+	template <typename Stream>
+	bool Serialize(Stream& stream)
+	{
+		serialize_bytes(stream, m_Pos, sizeof(m_Pos));
+		serialize_bytes(stream, m_Blocks , sizeof(m_Blocks));
+		return true;
+	}
+
 private:
 	Vec2<int32_t> m_Pos = { 0,0 };
-	Block Blocks[CHUNK_VOLUME]{};
+	Block m_Blocks[CHUNK_VOLUME]{};
 };
