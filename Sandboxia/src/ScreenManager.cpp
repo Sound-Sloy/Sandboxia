@@ -29,10 +29,10 @@ void ScreenManager::Update(float deltaTime)
 		}
 	}
 	if (lastScreenIndex == -1) {
-		lastScreenIndex = m_Screens.size() - 1;
+		lastScreenIndex = (int32_t)m_Screens.size() - 1; // cast for no warning
 	}
 	if (lastScreenIndex < 0) {
-		std::cout << "[WARNING] There might be no screens for ScreenManager to manage" << std::endl;
+		std::cout << "[WARNING] There might be no screens for ScreenManager to manage (update)" << std::endl;
 		lastScreenIndex = 0;
 	}
 
@@ -60,6 +60,25 @@ void ScreenManager::Update(float deltaTime)
 
 void ScreenManager::Draw()
 {
+	int32_t startDrawFromIndex = (int32_t)m_Screens.size() - 1; // cast for no warning
+	for (int32_t screenIndex = 0; screenIndex < m_Screens.size(); ++screenIndex) {
+		if (!m_Screens[screenIndex].IsTransparent()) {
+			startDrawFromIndex = screenIndex;
+			break;
+		}
+	}
+	if (startDrawFromIndex < 0) {
+		std::cout << "[WARNING] There might be no screens for ScreenManager to manage (draw)" << std::endl;
+		startDrawFromIndex = 0;
+	}
+
+	for (int32_t screenIndex = startDrawFromIndex; screenIndex >= 0; --screenIndex) {
+		m_Screens[screenIndex].Draw();
+	}
+	return;
+
+	// Delete this
+	// Note: The previous algo should be this but in reverse order
 	for (auto& screen : m_Screens) {
 		screen.Draw();
 		if (!screen.IsTransparent()) {

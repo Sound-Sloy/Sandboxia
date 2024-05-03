@@ -67,7 +67,8 @@ GameApp::~GameApp() noexcept
 
 bool GameApp::GameShouldClose() const
 {
-	return WindowShouldClose() or States::ForceClose;
+	return WindowShouldClose();
+	CloseWindow();
 }
 
 void GameApp::Tick()
