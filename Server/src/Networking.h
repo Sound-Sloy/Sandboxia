@@ -79,12 +79,12 @@ public:
             break;
         }
 
-        case GameMessageType::ChunkData: {
+        case GameMessageType::S2C_ChunkDataResponse: {
             message = YOJIMBO_NEW(allocator, ChunkDataMessage);
             if (!message) {
                 return nullptr;
             }
-            SetMessageType(message, (int32_t)GameMessageType::ChunkData);
+            SetMessageType(message, (int32_t)GameMessageType::S2C_ChunkDataResponse);
             return message;
             break;
         }

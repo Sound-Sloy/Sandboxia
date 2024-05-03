@@ -22,7 +22,7 @@ constexpr uint32_t Chunk::GetBlockIndexInChunk(Vec3<uint16_t> blockPos) {
 
 // FIXME: yukk
 constexpr Vec3<uint16_t> GetBlockPosInChunk(Vec3<int64_t> blockPos) {
-	return Vec3<uint16_t>{
+	return Vec3<uint16_t> {
 		blockPos.GetX() % CHUNK_SIZE_VEC3.GetX() >= 0 ? blockPos.GetX() % CHUNK_SIZE_VEC3.GetX() : CHUNK_SIZE_VEC3.GetX() + blockPos.GetX() % CHUNK_SIZE_VEC3.GetX(),
 		blockPos.GetY() % CHUNK_SIZE_VEC3.GetY() >= 0 ? blockPos.GetY() % CHUNK_SIZE_VEC3.GetY() : CHUNK_SIZE_VEC3.GetY() + blockPos.GetY() % CHUNK_SIZE_VEC3.GetY(),
 		blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ() >= 0 ? blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ() : CHUNK_SIZE_VEC3.GetZ() + blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ()

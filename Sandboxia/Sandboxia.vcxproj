@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{bd96bf92-0ff5-4e15-87f4-f25bedc5e79a}</ProjectGuid>
-    <RootNamespace>BlockGame</RootNamespace>
+    <RootNamespace>Sandboxia</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Sandboxia</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -148,22 +149,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\BlockGame.cpp" />
+    <ClCompile Include="src\Sandboxia.cpp" />
     <ClCompile Include="src\Client\Client.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Keyboard.cpp" />
+    <ClCompile Include="src\Screen.cpp" />
     <ClCompile Include="src\ScreenManager.cpp" />
     <ClCompile Include="src\SoundManager.cpp" />
     <ClCompile Include="src\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\commons\shared\utils\Vec2.h" />
-    <ClInclude Include="..\commons\shared\utils\Vec3.h" />
     <ClInclude Include="src\Client\Client.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\Options.h" />
+    <ClInclude Include="src\Screen.h" />
     <ClInclude Include="src\ScreenManager.h" />
     <ClInclude Include="src\ScreensEnum.h" />
     <ClInclude Include="src\SoundManager.h" />

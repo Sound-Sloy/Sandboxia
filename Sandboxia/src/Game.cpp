@@ -98,12 +98,10 @@ void GameApp::Update()
 	float deltaTime = GetFrameTime();
 	Globals::SoundManagerInstance->Update();
 	m_ScreenManager->Update(deltaTime);
-	//this->m_Board.Update(deltaTime);
 }
 
 void GameApp::Draw()
 {
 	ClearBackground(Globals::Colors::BackgroundColor);
 	m_ScreenManager->Draw();
-	//m_Board.Draw();
 }

@@ -21,7 +21,7 @@
     <ClCompile Include="src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BlockGame.cpp">
+    <ClCompile Include="src\Sandboxia.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Keyboard.cpp">
@@ -38,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="src\Client\Client.cpp">
       <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Screen.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,10 +74,7 @@
     <ClInclude Include="src\Client\Client.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\commons\shared\utils\Vec2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\commons\shared\utils\Vec3.h">
+    <ClInclude Include="src\Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
