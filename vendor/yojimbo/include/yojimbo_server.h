@@ -92,7 +92,7 @@ namespace yojimbo
         static void StaticSendLoopbackPacketCallbackFunction( void * context, int clientIndex, const uint8_t * packetData, int packetBytes, uint64_t packetSequence );
 
         ClientServerConfig m_config;
-        netcode_server_t * m_Server;
+        netcode_server_t * m_GameServer;
         Address m_address;                                  // original address passed to ctor
         Address m_boundAddress;                             // address after socket bind, eg. valid port
         uint8_t m_privateKey[KeyBytes];

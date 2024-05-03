@@ -10,11 +10,11 @@
 #include "MessageDispatcher.h"
 
 
-// https://www.rogiel.com/en/blog/getting-started-with-asio-cpp-creating-tcp-server
+// https://www.rogiel.com/en/blog/getting-started-with-asio-cpp-creating-tcp-gameServer
 // https://github.com/mas-bandwidth/yojimbo/blob/main/USAGE.md
 // https://github.com/mas-bandwidth/yojimbo/issues/25
 
-// the client and server config
+// the client and gameServer config
 struct GameConnectionConfig : yojimbo::ClientServerConfig {
     GameConnectionConfig() {
         numChannels = 2;
@@ -28,26 +28,26 @@ class GameAdapter : public yojimbo::Adapter
 {
 public:
     explicit GameAdapter(GameServer* server = nullptr) :
-        m_Server(server) {}
+        m_GameServer(server) {}
 
     yojimbo::MessageFactory* CreateMessageFactory(yojimbo::Allocator& allocator) override {
         return YOJIMBO_NEW(allocator, GameMessageFactory, allocator);
     }
 
     void OnServerClientConnected(int clientIndex) override {
-        if (m_Server != nullptr) {
-            m_Server->ClientConnected(clientIndex);
+        if (m_GameServer != nullptr) {
+            m_GameServer->ClientConnected(clientIndex);
         }
     }
 
     void OnServerClientDisconnected(int clientIndex) override {
-        if (m_Server != nullptr) {
-            m_Server->ClientDisconnected(clientIndex);
+        if (m_GameServer != nullptr) {
+            m_GameServer->ClientDisconnected(clientIndex);
         }
     }
 
 private:
-    GameServer* m_Server;
+    GameServer* m_GameServer;
 };
 
 // the message factory
@@ -79,12 +79,12 @@ public:
             break;
         }
 
-        case GameMessageType::S2C_ChunkDataResponse: {
+        case GameMessageType::S2C_CompressedChunkDataResponse: {
             message = YOJIMBO_NEW(allocator, ChunkDataMessage);
             if (!message) {
                 return nullptr;
             }
-            SetMessageType(message, (int32_t)GameMessageType::S2C_ChunkDataResponse);
+            SetMessageType(message, (int32_t)GameMessageType::S2C_CompressedChunkDataResponse);
             return message;
             break;
         }
@@ -110,7 +110,7 @@ public:
     void Update(float deltaTime);
 private:
     GameAdapter m_Adapter;
-    yojimbo::Server m_Server;
+    yojimbo::Server m_GameServer;
     GameConnectionConfig m_ConnectionConfig;
     std::unique_ptr<MessageDispatcher> m_Dispatcher;
 
@@ -122,4 +122,18 @@ private:
     double m_Time = 0;
 
     void SendMsgsToDispatcher();
+
+    friend class MessageDispatcher;
+};
+
+
+class MessageDispatcher {
+public:
+    MessageDispatcher(GameServer& gameServer);
+    //~MessageDispatcher() = default; deleted bc of reference
+
+    void DispatchMessage(uint32_t clientIndex, yojimbo::Message* message);
+private:
+    GameServer& m_GameServer;
+    bool m_bInitialized = false;
 };

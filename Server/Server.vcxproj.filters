@@ -62,5 +62,11 @@
     <ClInclude Include="src\NetworkString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\CompressedBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CompressedChunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

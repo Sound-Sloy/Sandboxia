@@ -1,5 +1,6 @@
 #pragma once
 #include "Chunk.h"
+#include "CompressedChunk.h"
 
 
 // C2S = Client to Server
@@ -50,7 +51,7 @@ public:
 class ChunkDataMessage : public yojimbo::BlockMessage
 {
 public:
-    Chunk S2C_ChunkDataResponse;
+    CompressedChunk S2C_ChunkDataResponse;
 
     ChunkDataMessage() : S2C_ChunkDataResponse() {}
 

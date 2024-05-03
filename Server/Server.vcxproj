@@ -162,6 +162,8 @@
   <ItemGroup>
     <ClInclude Include="src\Block.h" />
     <ClInclude Include="src\Chunk.h" />
+    <ClInclude Include="src\CompressedBlock.h" />
+    <ClInclude Include="src\CompressedChunk.h" />
     <ClInclude Include="src\MessageDispatcher.h" />
     <ClInclude Include="src\Messages.h" />
     <ClInclude Include="src\Networking.h" />
