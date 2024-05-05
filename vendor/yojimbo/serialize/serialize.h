@@ -354,7 +354,7 @@ namespace serialize
             @param bytes The size of the buffer in bytes. Must be a multiple of 4, because the bitpacker reads and writes memory as dwords, not bytes.
          */
 
-        BitWriter( void * data, int bytes ) : Data( (uint32_t*) data ), m_numWords( bytes / 4 )
+        BitWriter( void * data, int bytes ) : m_data( (uint32_t*) data ), m_numWords( bytes / 4 )
         {
             serialize_assert( data );
             serialize_assert( ( bytes % 4 ) == 0 );
@@ -389,7 +389,7 @@ namespace serialize
             if ( m_scratchBits >= 32 )
             {
                 serialize_assert( m_wordIndex < m_numWords );
-                Data[m_wordIndex] = host_to_network( uint32_t( m_scratch & 0xFFFFFFFF ) );
+                m_data[m_wordIndex] = host_to_network( uint32_t( m_scratch & 0xFFFFFFFF ) );
                 m_scratch >>= 32;
                 m_scratchBits -= 32;
                 m_wordIndex++;
@@ -448,7 +448,7 @@ namespace serialize
             if ( numWords > 0 )
             {
                 serialize_assert( ( m_bitsWritten % 32 ) == 0 );
-                memcpy( &Data[m_wordIndex], data + headBytes, numWords * 4 );
+                memcpy( &m_data[m_wordIndex], data + headBytes, numWords * 4 );
                 m_bitsWritten += numWords * 32;
                 m_wordIndex += numWords;
                 m_scratch = 0;
@@ -479,7 +479,7 @@ namespace serialize
             {
                 serialize_assert( m_scratchBits <= 32 );
                 serialize_assert( m_wordIndex < m_numWords );
-                Data[m_wordIndex] = host_to_network( uint32_t( m_scratch & 0xFFFFFFFF ) );
+                m_data[m_wordIndex] = host_to_network( uint32_t( m_scratch & 0xFFFFFFFF ) );
                 m_scratch >>= 32;
                 m_scratchBits = 0;
                 m_wordIndex++;
@@ -525,7 +525,7 @@ namespace serialize
 
         const uint8_t * GetData() const
         {
-            return (uint8_t*) Data;
+            return (uint8_t*) m_data;
         }
 
         /**
@@ -542,12 +542,12 @@ namespace serialize
 
     private:
 
-        uint32_t * Data;              ///< The buffer we are writing to, as a uint32_t * because we're writing dwords at a time.
+        uint32_t * m_data;              ///< The buffer we are writing to, as a uint32_t * because we're writing dwords at a time.
         uint64_t m_scratch;             ///< The scratch value where we write bits to (right to left). 64 bit for overflow. Once # of bits in scratch is >= 32, the low 32 bits are flushed to memory.
         int m_numBits;                  ///< The number of bits in the buffer. This is equivalent to the size of the buffer in bytes multiplied by 8. Note that the buffer size must always be a multiple of 4.
         int m_numWords;                 ///< The number of words in the buffer. This is equivalent to the size of the buffer in bytes divided by 4. Note that the buffer size must always be a multiple of 4.
         int m_bitsWritten;              ///< The number of bits written so far.
-        int m_wordIndex;                ///< The current word index. The next word flushed to memory will be at this index in Data.
+        int m_wordIndex;                ///< The current word index. The next word flushed to memory will be at this index in m_data.
         int m_scratchBits;              ///< The number of bits in scratch. When this is >= 32, the low 32 bits of scratch is flushed to memory as a dword and scratch is shifted right by 32.
     };
 
@@ -571,7 +571,7 @@ namespace serialize
          */
 
 #ifdef SERIALIZE_DEBUG
-        BitReader( const void * data, int bytes ) : Data( (const uint32_t*) data ), m_numBytes( bytes ), m_numWords( ( bytes + 3 ) / 4)
+        BitReader( const void * data, int bytes ) : m_data( (const uint32_t*) data ), m_numBytes( bytes ), m_numWords( ( bytes + 3 ) / 4)
 #else // #ifdef SERIALIZE_DEBUG
         BitReader( const void * data, int bytes ) : m_data( (const uint32_t*) data ), m_numBytes( bytes )
 #endif // #ifdef SERIALIZE_DEBUG
@@ -620,7 +620,7 @@ namespace serialize
 #ifdef SERIALIZE_DEBUG
                 serialize_assert( m_wordIndex < m_numWords );
 #endif // SERIALIZE_DEBUG
-                m_scratch |= uint64_t( network_to_host( Data[m_wordIndex] ) ) << m_scratchBits;
+                m_scratch |= uint64_t( network_to_host( m_data[m_wordIndex] ) ) << m_scratchBits;
                 m_scratchBits += 32;
                 m_wordIndex++;
             }
@@ -682,7 +682,7 @@ namespace serialize
             if ( numWords > 0 )
             {
                 serialize_assert( ( m_bitsRead % 32 ) == 0 );
-                memcpy( data + headBytes, &Data[m_wordIndex], numWords * 4 );
+                memcpy( data + headBytes, &m_data[m_wordIndex], numWords * 4 );
                 m_bitsRead += numWords * 32;
                 m_wordIndex += numWords;
                 m_scratchBits = 0;
@@ -734,7 +734,7 @@ namespace serialize
 
     private:
 
-        const uint32_t * Data;            ///< The bitpacked data we're reading as a dword array.
+        const uint32_t * m_data;            ///< The bitpacked data we're reading as a dword array.
         uint64_t m_scratch;                 ///< The scratch value. New data is read in 32 bits at a top to the left of this buffer, and data is read off to the right.
         int m_numBits;                      ///< Number of bits to read in the buffer. Of course, we can't *really* know this so it's actually m_numBytes * 8.
         int m_numBytes;                     ///< Number of bytes to read in the buffer. We know this, and this is the non-rounded up version.

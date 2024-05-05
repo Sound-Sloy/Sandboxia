@@ -4,16 +4,16 @@
 const uint8_t GameServer::DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes] = { 0 };
 
 GameServer::GameServer(const yojimbo::Address& address) :
-	m_Adapter(std::make_unique<GameAdapter>()), m_GameServer(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, *m_Adapter, 0.0),
+	m_Adapter(std::make_unique<GameAdapter>()), m_Server(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, *m_Adapter, 0.0),
 	m_Dispatcher(std::make_unique<MessageDispatcher>(MessageDispatcher(*this)))
 {
-	m_GameServer.Start(MAX_PLAYERS);
-	if (!m_GameServer.IsRunning()) {
+	m_Server.Start(MAX_PLAYERS);
+	if (!m_Server.IsRunning()) {
 		throw std::runtime_error("Could not start server on port " + std::to_string(address.GetPort()));
 	}
 
 	std::array<char, 256> buf;
-	m_GameServer.GetAddress().ToString(buf.data(), buf.size());
+	m_Server.GetAddress().ToString(buf.data(), buf.size());
 	std::cout << "Server address is " << buf.data() << std::endl;
 
 	/// TODO: LOAD GAME
@@ -44,34 +44,34 @@ void GameServer::Run() {
 
 void GameServer::Update(float deltaTime) {
 	// stop if server is not running
-	if (!m_GameServer.IsRunning()) {
+	if (!m_Server.IsRunning()) {
 		m_bRunning = false;
 		return;
 	}
 
 	// update server and process messages
-	m_GameServer.AdvanceTime(m_Time);
-	m_GameServer.ReceivePackets();
+	m_Server.AdvanceTime(m_Time);
+	m_Server.ReceivePackets();
 	SendMsgsToDispatcher();
 
 	// ... process client inputs ...
 	// ... update game ...
 	// ... send game state to clients ...
 
-	m_GameServer.SendPackets();
+	m_Server.SendPackets();
 }
 
 void GameServer::SendMsgsToDispatcher() {
 	for (uint32_t clientIndex = 0; clientIndex < MAX_PLAYERS; clientIndex++) {
-		if (!m_GameServer.IsClientConnected(clientIndex)) {
+		if (!m_Server.IsClientConnected(clientIndex)) {
 			continue;
 		}
 		for (uint32_t channelIndex = 0; channelIndex < m_ConnectionConfig.numChannels; channelIndex++) {
-			yojimbo::Message* message = m_GameServer.ReceiveMessage(clientIndex, channelIndex);
+			yojimbo::Message* message = m_Server.ReceiveMessage(clientIndex, channelIndex);
 			while (message != nullptr) {
 				m_Dispatcher->DispatchMessage(clientIndex, message);
-				m_GameServer.ReleaseMessage(clientIndex, message);
-				message = m_GameServer.ReceiveMessage(clientIndex, channelIndex);
+				m_Server.ReleaseMessage(clientIndex, message);
+				message = m_Server.ReceiveMessage(clientIndex, channelIndex);
 			}
 		}
 	}
@@ -118,7 +118,7 @@ bool GameServer::IsPlayerBanned(char playerName[128])
 
 
 MessageDispatcher::MessageDispatcher(GameServer& gameServer) :
-	m_GameServer(gameServer)
+	m_Server(gameServer)
 {
 	m_bInitialized = true;
 }
@@ -127,31 +127,31 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 	switch ((GameMessageType)message->GetType()) {
 	case GameMessageType::C2S_ConnectRequest: {
 		ConnectRequestMessage* request = (ConnectRequestMessage*)message;
-		ConnectResponseMessage* response = (ConnectResponseMessage*)m_GameServer.m_GameServer.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_ConnectResponse);
+		ConnectResponseMessage* response = (ConnectResponseMessage*)m_Server.m_Server.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_ConnectResponse);
 
-		if (!m_GameServer.ValidatePlayerName(request->PlayerName)) {
+		if (!m_Server.ValidatePlayerName(request->PlayerName)) {
 			response->Status = ConnectionStatus::InvalidPlayername;
-			m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+			m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 			break;
 		}
-		if (request->ClientVersion != m_GameServer.REQUIRED_CLIENT_VERSION) {
+		if (request->ClientVersion != m_Server.REQUIRED_CLIENT_VERSION) {
 			response->Status = ConnectionStatus::OutdatedClient;
-			m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+			m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 			break;
 		}
 		// TO DO: Some check with epoch
 
-		if (m_GameServer.IsPlayerBanned(request->PlayerName)) {
+		if (m_Server.IsPlayerBanned(request->PlayerName)) {
 			response->Status = ConnectionStatus::CancelledByServer;
-			m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+			m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 			break;
 		}
 
-		m_GameServer.m_PlayerList.push_back(Player(std::string(request->PlayerName), clientIndex, {}));
-		m_GameServer.m_PlayerList.back().SetConnected(true);
+		m_Server.m_PlayerList.push_back(Player(std::string(request->PlayerName), clientIndex, {}));
+		m_Server.m_PlayerList.back().SetConnected(true);
 
 		response->Status = ConnectionStatus::ConnectionOK;
-		m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+		m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 		break;
 	}
 	}

@@ -18,5 +18,5 @@ public:
     void OnServerClientDisconnected(int clientIndex) override;
 
 private:
-    GameServer* m_GameServer = nullptr;
+    GameServer* m_Server = nullptr;
 };

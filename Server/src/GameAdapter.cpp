@@ -3,7 +3,7 @@
 
 // explicit
 GameAdapter::GameAdapter(GameServer* server) {
-	m_GameServer = server;
+	m_Server = server;
 }
 
 // override
@@ -13,14 +13,14 @@ yojimbo::MessageFactory* GameAdapter::CreateMessageFactory(yojimbo::Allocator& a
 
 // override
 void GameAdapter::OnServerClientConnected(int clientIndex) {
-	if (m_GameServer != nullptr) {
-		m_GameServer->ClientConnected(clientIndex);
+	if (m_Server != nullptr) {
+		m_Server->ClientConnected(clientIndex);
 	}
 }
 
 // override
 void GameAdapter::OnServerClientDisconnected(int clientIndex) {
-	if (m_GameServer != nullptr) {
-		m_GameServer->ClientDisconnected(clientIndex);
+	if (m_Server != nullptr) {
+		m_Server->ClientDisconnected(clientIndex);
 	}
 }

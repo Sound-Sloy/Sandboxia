@@ -21,7 +21,7 @@ public:
     void Update(float deltaTime);
 private:
     std::unique_ptr<GameAdapter> m_Adapter;
-    yojimbo::Server m_GameServer;
+    yojimbo::Server m_Server;
     GameConnectionConfig m_ConnectionConfig;
     std::unique_ptr<MessageDispatcher> m_Dispatcher;
 
@@ -51,6 +51,6 @@ public:
 
     void DispatchMessage(uint32_t clientIndex, yojimbo::Message* message);
 private:
-    GameServer& m_GameServer;
+    GameServer& m_Server;
     bool m_bInitialized = false;
 };

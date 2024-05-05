@@ -55,7 +55,7 @@ namespace yojimbo
             m_size = size;
             m_bytes = 8 * ( ( size / 64 ) + ( ( size % 64 ) ? 1 : 0 ) );
             yojimbo_assert( m_bytes > 0 );
-            Data = (uint64_t*) YOJIMBO_ALLOCATE( allocator, m_bytes );
+            m_data = (uint64_t*) YOJIMBO_ALLOCATE( allocator, m_bytes );
             Clear();
         }
 
@@ -65,9 +65,9 @@ namespace yojimbo
 
         ~BitArray()
         {
-            yojimbo_assert( Data );
+            yojimbo_assert( m_data );
             yojimbo_assert( m_allocator );
-            YOJIMBO_FREE( *m_allocator, Data );
+            YOJIMBO_FREE( *m_allocator, m_data );
             m_allocator = NULL;
         }
 
@@ -77,8 +77,8 @@ namespace yojimbo
 
         void Clear()
         {
-            yojimbo_assert( Data );
-            memset( Data, 0, m_bytes );
+            yojimbo_assert( m_data );
+            memset( m_data, 0, m_bytes );
         }
 
         /**
@@ -94,7 +94,7 @@ namespace yojimbo
             const int bit_index = index & ( (1<<6) - 1 );
             yojimbo_assert( bit_index >= 0 );
             yojimbo_assert( bit_index < 64 );
-            Data[data_index] |= uint64_t(1) << bit_index;
+            m_data[data_index] |= uint64_t(1) << bit_index;
         }
 
         /**
@@ -108,7 +108,7 @@ namespace yojimbo
             yojimbo_assert( index < m_size );
             const int data_index = index >> 6;
             const int bit_index = index & ( (1<<6) - 1 );
-            Data[data_index] &= ~( uint64_t(1) << bit_index );
+            m_data[data_index] &= ~( uint64_t(1) << bit_index );
         }
 
         /**
@@ -125,7 +125,7 @@ namespace yojimbo
             const int bit_index = index & ( (1<<6) - 1 );
             yojimbo_assert( bit_index >= 0 );
             yojimbo_assert( bit_index < 64 );
-            return ( Data[data_index] >> bit_index ) & 1;
+            return ( m_data[data_index] >> bit_index ) & 1;
         }
 
         /**
@@ -143,7 +143,7 @@ namespace yojimbo
         Allocator * m_allocator;                            ///< Allocator passed in to the constructor.
         int m_size;                                         ///< The size of the bit array in bits.
         int m_bytes;                                        ///< The size of the bit array in bytes.
-        uint64_t * Data;                                  ///< The data backing the bit array is an array of 64 bit integer values.
+        uint64_t * m_data;                                  ///< The data backing the bit array is an array of 64 bit integer values.
 
         BitArray( const BitArray & other );
         BitArray & operator = ( const BitArray & other );

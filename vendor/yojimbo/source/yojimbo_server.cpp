@@ -39,13 +39,13 @@ namespace yojimbo
         m_address = address;
         m_boundAddress = address;
         m_config = config;
-        m_GameServer = NULL;
+        m_server = NULL;
     }
 
     Server::~Server()
     {
         // IMPORTANT: Please stop the server before destroying it!
-        yojimbo_assert( !m_GameServer );
+        yojimbo_assert( !m_server );
     }
 
     void Server::Start( int maxClients )
@@ -69,42 +69,42 @@ namespace yojimbo
         netcodeConfig.connect_disconnect_callback = StaticConnectDisconnectCallbackFunction;
         netcodeConfig.send_loopback_packet_callback = StaticSendLoopbackPacketCallbackFunction;
         
-        m_GameServer = netcode_server_create(addressString, &netcodeConfig, GetTime());
+        m_server = netcode_server_create(addressString, &netcodeConfig, GetTime());
         
-        if ( !m_GameServer )
+        if ( !m_server )
         {
             Stop();
             return;
         }
         
-        netcode_server_start( m_GameServer, maxClients );
+        netcode_server_start( m_server, maxClients );
 
-        m_boundAddress.SetPort( netcode_server_get_port( m_GameServer ) );
+        m_boundAddress.SetPort( netcode_server_get_port( m_server ) );
     }
 
     void Server::Stop()
     {
-        if ( m_GameServer )
+        if ( m_server )
         {
             m_boundAddress = m_address;
-            netcode_server_stop( m_GameServer );
-            netcode_server_destroy( m_GameServer );
-            m_GameServer = NULL;
+            netcode_server_stop( m_server );
+            netcode_server_destroy( m_server );
+            m_server = NULL;
         }
         BaseServer::Stop();
     }
 
     void Server::DisconnectClient( int clientIndex )
     {
-        yojimbo_assert( m_GameServer );
-        netcode_server_disconnect_client( m_GameServer, clientIndex );
+        yojimbo_assert( m_server );
+        netcode_server_disconnect_client( m_server, clientIndex );
         ResetClient( clientIndex );
     }
 
     void Server::DisconnectAllClients()
     {
-        yojimbo_assert( m_GameServer );
-        netcode_server_disconnect_all_clients( m_GameServer );
+        yojimbo_assert( m_server );
+        netcode_server_disconnect_all_clients( m_server );
         const int maxClients = GetMaxClients();
         for ( int i = 0; i < maxClients; ++i )
         {
@@ -114,7 +114,7 @@ namespace yojimbo
 
     void Server::SendPackets()
     {
-        if ( m_GameServer )
+        if ( m_server )
         {
             const int maxClients = GetMaxClients();
             for ( int i = 0; i < maxClients; ++i )
@@ -135,7 +135,7 @@ namespace yojimbo
 
     void Server::ReceivePackets()
     {
-        if ( m_GameServer )
+        if ( m_server )
         {
             const int maxClients = GetMaxClients();
             for ( int clientIndex = 0; clientIndex < maxClients; ++clientIndex )
@@ -144,11 +144,11 @@ namespace yojimbo
                 {
                     int packetBytes;
                     uint64_t packetSequence;
-                    uint8_t * packetData = netcode_server_receive_packet( m_GameServer, clientIndex, &packetBytes, &packetSequence );
+                    uint8_t * packetData = netcode_server_receive_packet( m_server, clientIndex, &packetBytes, &packetSequence );
                     if ( !packetData )
                         break;
                     reliable_endpoint_receive_packet( GetClientEndpoint( clientIndex ), packetData, packetBytes );
-                    netcode_server_free_packet( m_GameServer, packetData );
+                    netcode_server_free_packet( m_server, packetData );
                 }
             }
         }
@@ -156,9 +156,9 @@ namespace yojimbo
 
     void Server::AdvanceTime( double time )
     {
-        if ( m_GameServer )
+        if ( m_server )
         {
-            netcode_server_update( m_GameServer, time );
+            netcode_server_update( m_server, time );
         }
         BaseServer::AdvanceTime( time );
         NetworkSimulator * networkSimulator = GetNetworkSimulator();
@@ -170,7 +170,7 @@ namespace yojimbo
             int numPackets = networkSimulator->ReceivePackets( m_config.maxSimulatorPackets, packetData, packetBytes, to );
             for ( int i = 0; i < numPackets; ++i )
             {
-                netcode_server_send_packet( m_GameServer, to[i], (uint8_t*) packetData[i], packetBytes[i] );
+                netcode_server_send_packet( m_server, to[i], (uint8_t*) packetData[i], packetBytes[i] );
                 YOJIMBO_FREE( networkSimulator->GetAllocator(), packetData[i] );
             }
         }
@@ -178,42 +178,42 @@ namespace yojimbo
 
     bool Server::IsClientConnected( int clientIndex ) const
     {
-        return netcode_server_client_connected( m_GameServer, clientIndex ) != 0;
+        return netcode_server_client_connected( m_server, clientIndex ) != 0;
     }
 
     uint64_t Server::GetClientId( int clientIndex ) const
     {
-        return netcode_server_client_id( m_GameServer, clientIndex );
+        return netcode_server_client_id( m_server, clientIndex );
     }
 
     netcode_address_t * Server::GetClientAddress( int clientIndex ) const
     {
-        return netcode_server_client_address( m_GameServer, clientIndex );
+        return netcode_server_client_address( m_server, clientIndex );
     }
 
     int Server::GetNumConnectedClients() const
     {
-        return netcode_server_num_connected_clients( m_GameServer );
+        return netcode_server_num_connected_clients( m_server );
     }
 
     void Server::ConnectLoopbackClient( int clientIndex, uint64_t clientId, const uint8_t * userData )
     {
-        netcode_server_connect_loopback_client( m_GameServer, clientIndex, clientId, userData );
+        netcode_server_connect_loopback_client( m_server, clientIndex, clientId, userData );
     }
 
     void Server::DisconnectLoopbackClient( int clientIndex )
     {
-        netcode_server_disconnect_loopback_client( m_GameServer, clientIndex );
+        netcode_server_disconnect_loopback_client( m_server, clientIndex );
     }
 
     bool Server::IsLoopbackClient( int clientIndex ) const
     {
-        return netcode_server_client_loopback( m_GameServer, clientIndex ) != 0;
+        return netcode_server_client_loopback( m_server, clientIndex ) != 0;
     }
 
     void Server::ProcessLoopbackPacket( int clientIndex, const uint8_t * packetData, int packetBytes, uint64_t packetSequence )
     {
-        netcode_server_process_loopback_packet( m_GameServer, clientIndex, packetData, packetBytes, packetSequence );
+        netcode_server_process_loopback_packet( m_server, clientIndex, packetData, packetBytes, packetSequence );
     }
 
     void Server::TransmitPacketFunction( int clientIndex, uint16_t packetSequence, uint8_t * packetData, int packetBytes )
@@ -226,7 +226,7 @@ namespace yojimbo
         }
         else
         {
-            netcode_server_send_packet( m_GameServer, clientIndex, packetData, packetBytes );
+            netcode_server_send_packet( m_server, clientIndex, packetData, packetBytes );
         }
     }
 
