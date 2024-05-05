@@ -20,14 +20,14 @@ public:
 		return this->m_Length == rhs.m_Length and ((this->m_Data == nullptr and rhs.m_Data == nullptr) or strncmp(this->m_Data, rhs.m_Data, this->m_Length) == 0);
 	}
 
-	constexpr std::ostream& operator<<(std::ostream& os) const {
+	std::ostream& operator<<(std::ostream& os) const {
 		for (uint32_t _ = 0; _ < m_Length; ++_) {
 			os.put(m_Data[_]);
 		}
 		return os;
 	}
 
-	constexpr std::istream& operator>>(std::istream& is) const {
+	std::istream& operator>>(std::istream& is) const {
 		is.read(m_Data, m_Length);
 		return is;
 	}
@@ -43,7 +43,6 @@ public:
 		}
 
 		m_Data = (char*)malloc(m_Length);
-		serialize_bytes(stream, ClientVersion, sizeof(ClientVersion) * sizeof(uint8_t));
 		
 		return true;
 	}

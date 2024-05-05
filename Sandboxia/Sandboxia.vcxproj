@@ -149,8 +149,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Client\GameClient.cpp" />
     <ClCompile Include="src\Sandboxia.cpp" />
-    <ClCompile Include="src\Client\Client.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Keyboard.cpp" />
     <ClCompile Include="src\Screen.cpp" />
@@ -159,7 +159,8 @@
     <ClCompile Include="src\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Client\Client.h" />
+    <ClInclude Include="src\Client\ClientServerConfig.h" />
+    <ClInclude Include="src\Client\GameClient.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Keyboard.h" />

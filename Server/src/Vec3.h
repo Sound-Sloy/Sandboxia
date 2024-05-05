@@ -17,6 +17,12 @@ public:
 	constexpr void SetX(T x) { this->x = x; };
 	constexpr void SetY(T y) { this->y = y; };
 	constexpr void SetZ(T z) { this->z = z; };
+	
+	template <class C>
+	constexpr Vec3<C> As() {
+		return Vec3<C>{(C)x, (C)y, (C)z};
+	}
+
 public:
 	constexpr bool operator==(const Vec3& rhs) const
 	{
@@ -28,7 +34,7 @@ public:
 	}
 	constexpr Vec3 operator+(const Vec3& rhs) const
 	{
-		return { this->x + rhs.x, this->y + rhs.y, this->z + rhs.z };
+		return { (T)(this->x + rhs.x), (T)(this->y + rhs.y), (T)(this->z + rhs.z) };
 	}
 	constexpr Vec3 operator+(const T rhs) const
 	{
@@ -81,7 +87,6 @@ public:
 			(this->z % rhs.z) * ((this->z % rhs.z) >= 0) + (rhs.z + (this->z % rhs.z)) * !((this->z % rhs.z) >= 0)
 		};
 	}
-
 private:
 	T x;
 	T y;

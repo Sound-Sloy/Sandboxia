@@ -36,10 +36,10 @@
     <ClCompile Include="src\ScreenManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Client\Client.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="src\Screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Client\GameClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,11 +71,14 @@
     <ClInclude Include="src\ScreensEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Client\Client.h">
-      <Filter>Client</Filter>
-    </ClInclude>
     <ClInclude Include="src\Screen.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Client\GameClient.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Client\ClientServerConfig.h">
+      <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,8 +1,11 @@
-#include "Networking.h"
+#include "GameServer.h"
+#include "GameAdapter.h"
 
+const uint8_t GameServer::DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes] = { 0 };
 
 GameServer::GameServer(const yojimbo::Address& address) :
-	m_Adapter(this), m_GameServer(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, m_Adapter, 0.0)
+	m_Adapter(std::make_unique<GameAdapter>()), m_GameServer(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, *m_Adapter, 0.0),
+	m_Dispatcher(std::make_unique<MessageDispatcher>(MessageDispatcher(*this)))
 {
 	m_GameServer.Start(MAX_PLAYERS);
 	if (!m_GameServer.IsRunning()) {
@@ -79,7 +82,7 @@ bool GameServer::ValidatePlayerName(char playerName[128])
 {
 	bool found = false;
 	for (int32_t i = 127; i >= 0; --i) {
-		if (   ((int32_t)playerName[i] >= 48 and (int32_t)playerName[i] <= 57)	/* 12345... */
+		if (((int32_t)playerName[i] >= 48 and (int32_t)playerName[i] <= 57)	/* 12345... */
 			or ((int32_t)playerName[i] >= 64 and (int32_t)playerName[i] <= 90)  /* ABCDE... */
 			or ((int32_t)playerName[i] >= 97 and (int32_t)playerName[i] <= 122) /* abcde... */
 			or ((int32_t)playerName[i] == 95))									/* _ */
@@ -98,7 +101,7 @@ bool GameServer::ValidatePlayerName(char playerName[128])
 
 	// if first letter is not a->Z
 
-	if (    ((int32_t)playerName[0] < 64 or (int32_t)playerName[0] > 90)	/* ABCDE... */
+	if (((int32_t)playerName[0] < 64 or (int32_t)playerName[0] > 90)	/* ABCDE... */
 		and ((int32_t)playerName[0] < 97 or (int32_t)playerName[0] > 122))	/* abcde... */
 	{
 		return false;
@@ -125,7 +128,7 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 	case GameMessageType::C2S_ConnectRequest: {
 		ConnectRequestMessage* request = (ConnectRequestMessage*)message;
 		ConnectResponseMessage* response = (ConnectResponseMessage*)m_GameServer.m_GameServer.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_ConnectResponse);
-		bool responseSet = false;
+
 		if (!m_GameServer.ValidatePlayerName(request->PlayerName)) {
 			response->Status = ConnectionStatus::InvalidPlayername;
 			m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
@@ -143,7 +146,10 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 			m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 			break;
 		}
-		
+
+		m_GameServer.m_PlayerList.push_back(Player(std::string(request->PlayerName), clientIndex, {}));
+		m_GameServer.m_PlayerList.back().SetConnected(true);
+
 		response->Status = ConnectionStatus::ConnectionOK;
 		m_GameServer.m_GameServer.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 		break;

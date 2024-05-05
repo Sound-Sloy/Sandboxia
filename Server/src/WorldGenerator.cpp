@@ -36,14 +36,14 @@ WorldGenerator::WorldGenerator() {
 Chunk WorldGenerator::GenerateChunk(Vec2<int32_t> chunkPos) {
 	Chunk chunk;
 	chunk.SetPos(chunkPos);
-	for (int32_t eX = 0; eX < CHUNK_SIZE_VEC3.GetX(); ++eX) {
-		for (int32_t eZ = 0; eZ < CHUNK_SIZE_VEC3.GetZ(); ++eZ) {
-			for (int32_t eY = 0; eY < CHUNK_SIZE_VEC3.GetY(); ++eY) {
+	for (uint16_t eX = 0; eX < CHUNK_SIZE_VEC3.GetX(); ++eX) {
+		for (uint16_t eZ = 0; eZ < CHUNK_SIZE_VEC3.GetZ(); ++eZ) {
+			for (uint16_t eY = 0; eY < CHUNK_SIZE_VEC3.GetY(); ++eY) {
 				Block_e blockType = GenerateBlockInChunk(chunk, { eX,eY,eZ });
 
 #ifndef BLOCK_CASE
 #define BLOCK_CASE(BLOCKTYPE,BLOCKCLASS) { \
-			case (BLOCKTYPE): \
+			case ((Block_e)BLOCKTYPE): \
 			{ \
 				chunk.SetBlock({ eX,eY,eZ }, BLOCKCLASS()); \
 				break; \
@@ -83,6 +83,7 @@ Chunk WorldGenerator::GenerateChunk(Vec2<int32_t> chunkPos) {
 			}
 		}
 	}
+	return chunk;
 }
 
 Block_e WorldGenerator::GenerateBlockInChunk(Chunk& chunk, Vec3<int64_t> blockPos) {
@@ -107,7 +108,7 @@ Block_e WorldGenerator::GenerateBlockInChunk(Chunk& chunk, Vec3<int64_t> blockPo
 			blockType = Block_e::STONE; //Stone
 		}
 		else if (ny + 1 < ns) {
-			if (chunk.GetBlock(blockPos + Vec3<int64_t>{0,1,0}).BlockType == Block_e::AIR) {
+			if (chunk.GetBlock(blockPos.As<uint16_t>() + Vec3<uint16_t>{0, 1, 0}).BlockType == Block_e::AIR) {
 			//if (chunk->data[(index + CHUNK_SIZE_XZ) % CHUNK_SIZE] == 0) {
 				blockType = Block_e::GRASS; //Grass
 			}

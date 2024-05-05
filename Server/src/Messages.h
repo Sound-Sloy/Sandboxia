@@ -1,27 +1,7 @@
 #pragma once
 #include "Chunk.h"
 #include "CompressedChunk.h"
-
-
-// C2S = Client to Server
-// S2C = Server to Client
-enum class GameMessageType {
-    TEST,
-    C2S_ConnectRequest,
-    S2C_ConnectResponse,
-    Disconnect,
-    C2S_ChunkDataRequest,
-    S2C_ChunkDataResponse,
-    PlayerPos,
-    COUNT
-};
-
-// two channels, one for each type that Yojimbo supports
-enum class GameChannel {
-    RELIABLE,
-    UNRELIABLE,
-    COUNT
-};
+#include "CSShared.h"
 
 class TestMessage : public yojimbo::Message
 {
@@ -51,15 +31,15 @@ public:
 class ChunkDataMessage : public yojimbo::BlockMessage
 {
 public:
-    CompressedChunk S2C_ChunkDataResponse;
+    CompressedChunk S2C_CompressedChunkDataResponse;
 
-    ChunkDataMessage() : S2C_ChunkDataResponse() {}
+    ChunkDataMessage() : S2C_CompressedChunkDataResponse() {}
 
     template <typename Stream>
     bool Serialize(Stream& stream)
     {
         //serialize_bits(stream, Sequence, 16);
-        serialize_object(stream, S2C_ChunkDataResponse);
+        serialize_object(stream, S2C_CompressedChunkDataResponse);
         return true;
     }
 
@@ -87,7 +67,7 @@ public:
     bool Serialize(Stream& stream)
     {
         //serialize_bits(stream, Sequence, 16);
-        serialize_bytes(stream, PlayerName, sizeof(PlayerName));
+        serialize_bytes(stream, (uint8_t*)&PlayerName, sizeof(PlayerName));
         serialize_bits(stream, PlayerEPOCH, sizeof(PlayerEPOCH) * sizeof(uint8_t));
         serialize_bits(stream, ClientVersion, sizeof(ClientVersion) * sizeof(uint8_t));
         return true;
@@ -122,7 +102,7 @@ public:
 
     template <class Stream>
     bool Serialize(Stream& stream) {
-        serialize_bytes(stream, Status, sizeof(Status));
+        serialize_bytes(stream, (uint8_t*)&Status, sizeof(Status));
         if (Status == ConnectionStatus::CancelledByServer) {
 
         }
