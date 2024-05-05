@@ -1,7 +1,6 @@
 #pragma once
 #include "Chunk.h"
 #include "CompressedChunk.h"
-#include "CSShared.h"
 
 class TestMessage : public yojimbo::Message
 {

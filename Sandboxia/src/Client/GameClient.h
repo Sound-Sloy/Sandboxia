@@ -1,9 +1,10 @@
 #pragma once
 
 #include <yojimbo.h>
-#include <cstdint>
+#include <iostream>
 
-#include "ClientServerConfig.h"
+#include <Server/src/CSShared.h>
+#include <Server/src/GameMessageFactory.h>
 
 class GameClient;
 
@@ -14,21 +15,42 @@ public:
 
     yojimbo::MessageFactory* CreateMessageFactory(yojimbo::Allocator& allocator) override;
 
-    void OnServerClientConnected(int clientIndex) override;
+    void OnServerClientConnected(int32_t clientIndex) override;
 
-    void OnServerClientDisconnected(int clientIndex) override;
+    void OnServerClientDisconnected(int32_t clientIndex) override;
 
 private:
-    GameClient* m_GameClient = nullptr;
+    GameClient* m_Client = nullptr;
 };
+ 
+class ClientMessageDispatcher;
 
 class GameClient {
 public:
     GameClient(const yojimbo::Address& serverAddress);
 
+    void Update(float deltaTime);
+
+    void SendMsgsToClientDispatcher();
+
 private:
     GameConnectionConfig m_ConnectionConfig;
-    ClientAdapter* m_Adapter = nullptr;
-	yojimbo::Client* m_Client;
+    std::unique_ptr<ClientAdapter> m_Adapter;
+	yojimbo::Client m_Client;
 
+    std::unique_ptr<ClientMessageDispatcher> m_Dispatcher;
+
+    static const uint8_t DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes];
+
+
+    friend class ClientMessageDispatcher;
+};
+
+class ClientMessageDispatcher {
+public:
+    ClientMessageDispatcher(GameClient& gameClient);
+
+    void DispatchMessage(yojimbo::Message* message);
+private:
+    GameClient& m_GameClient;
 };

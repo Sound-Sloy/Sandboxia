@@ -117,7 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)commons;$(SolutionDir)vendor\yojimbo\include;$(SolutionDir)vendor\FastNoise2\include;$(SolutionDir)vendor\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)commons;$(SolutionDir)vendor\yojimbo\include;$(SolutionDir)vendor\FastNoise2\include;$(SolutionDir)vendor\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)commons;$(SolutionDir)vendor\yojimbo\include;$(SolutionDir)vendor\FastNoise2\include;$(SolutionDir)vendor\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)commons;$(SolutionDir)vendor\yojimbo\include;$(SolutionDir)vendor\FastNoise2\include;$(SolutionDir)vendor\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -171,6 +171,17 @@
     <ClInclude Include="src\SoundManager.h" />
     <ClInclude Include="src\States.h" />
     <ClInclude Include="src\Text.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Server\Server.vcxproj">
+      <Project>{05ed72ce-cea4-421c-8beb-ccfd992a2b46}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\vendor\raylib\raylib.vcxproj">
+      <Project>{e89d61ac-55de-4482-afd4-df7242ebc859}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\vendor\yojimbo\yojimbo.vcxproj">
+      <Project>{5e88ac70-ca67-2b0c-d37f-b6e23fde916d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
