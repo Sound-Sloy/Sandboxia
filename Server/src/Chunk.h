@@ -3,8 +3,8 @@
 #include <cstdlib>
 #include <vector>
 #include "Block.h"
-#include "Vec2.h"
-#include "Vec3.h"
+#include <shared/utils/Vec2.h>
+#include <shared/utils/Vec3.h>
 
 #define CHUNK_VOLUME (32*32*32)
 #define CHUNK_SIZE_VEC3 Vec3(32,32,32)

@@ -1,5 +1,7 @@
 #include "Game.h"
 
+
+
 GameApp::GameApp(int32_t width, int32_t height, std::string windowTitle)
 {
 	//LoadOptions();
@@ -54,7 +56,15 @@ GameApp::GameApp(int32_t width, int32_t height, std::string windowTitle)
 
 	//Globals::Colors::BackgroundColor = Color(20, 20, 30, 255);
 
+	InitializeYojimbo();
+
+
+	m_ServerThread = std::thread([]() {
+		std::unique_ptr<GameServer> server = std::make_unique<GameServer>(yojimbo::Address(127, 0, 0, 1, 25565));
+		server->Run();
+		});
 	
+	m_Client = std::make_unique<GameClient>(yojimbo::Address(127, 0, 0, 1, 25565));
 }
 
 GameApp::~GameApp() noexcept
@@ -62,13 +72,14 @@ GameApp::~GameApp() noexcept
 	assert(GetWindowHandle());
 	CloseAudioDevice();
 	CloseWindow();
+	
+	ShutdownYojimbo();
 	//SaveOptions();
 }
 
 bool GameApp::GameShouldClose() const
 {
 	return WindowShouldClose();
-	CloseWindow();
 }
 
 void GameApp::Tick()
@@ -99,6 +110,8 @@ void GameApp::Update()
 	float deltaTime = GetFrameTime();
 	Globals::SoundManagerInstance->Update();
 	m_ScreenManager->Update(deltaTime);
+
+	m_Client->Update(deltaTime);
 }
 
 void GameApp::Draw()

@@ -40,7 +40,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Client\GameClient.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

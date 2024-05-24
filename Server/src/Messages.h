@@ -53,7 +53,7 @@ public:
     };
 };
 
-class ConnectRequestMessage : public yojimbo::BlockMessage
+class ConnectRequestMessage : public yojimbo::Message
 {
 public:
     char PlayerName[128] = {0};
@@ -67,8 +67,8 @@ public:
     {
         //serialize_bits(stream, Sequence, 16);
         serialize_bytes(stream, (uint8_t*)&PlayerName, sizeof(PlayerName));
-        serialize_bits(stream, PlayerEPOCH, sizeof(PlayerEPOCH) * sizeof(uint8_t));
-        serialize_bits(stream, ClientVersion, sizeof(ClientVersion) * sizeof(uint8_t));
+        serialize_bytes(stream, (uint8_t*)&PlayerEPOCH, sizeof(PlayerEPOCH));
+        serialize_bytes(stream, (uint8_t*)&ClientVersion, sizeof(ClientVersion));
         return true;
     }
 
@@ -88,13 +88,16 @@ enum class ConnectionStatus : uint8_t {
     InvalidPlayername,
     InvalidEPOCH,
     OutdatedClient,
-    CancelledByServer
+    CancelledByServer,
+    AlreadyConnected,
+    NONE,
+    ENUM_CNT
 };
 
-class ConnectResponseMessage : public yojimbo::BlockMessage
+class ConnectResponseMessage : public yojimbo::Message
 {
 public:
-    ConnectionStatus Status;
+    ConnectionStatus Status = ConnectionStatus::NONE;
     const char* Data = nullptr;
 
     ConnectResponseMessage() = default;

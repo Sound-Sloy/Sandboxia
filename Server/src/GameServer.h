@@ -21,8 +21,8 @@ public:
     void Update(float deltaTime);
 private:
     std::unique_ptr<GameAdapter> m_Adapter;
-    yojimbo::Server m_Server;
     GameConnectionConfig m_ConnectionConfig;
+    yojimbo::Server m_Server;
     std::unique_ptr<MessageDispatcher> m_Dispatcher;
 
     static const uint8_t DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes];
@@ -33,7 +33,7 @@ private:
     std::vector<Player> m_PlayerList;
 
     bool m_bRunning = true;
-    double m_Time = 0;
+    double m_Time = 0.f;
 
     void SendMsgsToDispatcher();
 

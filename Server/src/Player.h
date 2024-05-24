@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "Vec3.h"
+#include <shared/utils/Vec3.h>
 
 class Player {
 public:

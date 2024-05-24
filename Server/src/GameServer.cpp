@@ -4,7 +4,9 @@
 const uint8_t GameServer::DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes] = { 0 };
 
 GameServer::GameServer(const yojimbo::Address& address) :
-	m_Adapter(std::make_unique<GameAdapter>()), m_Server(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, *m_Adapter, 0.0),
+	m_ConnectionConfig(), // TO DO: WTF? Required for m_Server to init properly ... why
+	m_Adapter(std::make_unique<GameAdapter>()),
+	m_Server(yojimbo::GetDefaultAllocator(), DEFAULT_PRIVATE_KEY, address, m_ConnectionConfig, *m_Adapter, m_Time),
 	m_Dispatcher(std::make_unique<MessageDispatcher>(MessageDispatcher(*this)))
 {
 	m_Server.Start(MAX_PLAYERS);
@@ -15,7 +17,6 @@ GameServer::GameServer(const yojimbo::Address& address) :
 	std::array<char, 256> buf;
 	m_Server.GetAddress().ToString(buf.data(), buf.size());
 	std::cout << "Server address is " << buf.data() << std::endl;
-
 	/// TODO: LOAD GAME
 	/// ...
 }
@@ -29,7 +30,7 @@ void GameServer::ClientDisconnected(int32_t clientIndex) {
 }
 
 void GameServer::Run() {
-	float fixedDt = 1.0f / TICK_RATE;
+	double fixedDt = 1.0 / TICK_RATE;
 	while (m_bRunning) {
 		double currentTime = yojimbo_time();
 		if (m_Time <= currentTime) {
@@ -51,6 +52,7 @@ void GameServer::Update(float deltaTime) {
 
 	// update server and process messages
 	m_Server.AdvanceTime(m_Time);
+	//std::cout << "\t\t\t\t\t\t[Server] m_Time = " << m_Time << " Delta = " << deltaTime << std::endl;
 	m_Server.ReceivePackets();
 	SendMsgsToDispatcher();
 
@@ -118,9 +120,8 @@ bool GameServer::IsPlayerBanned(char playerName[128])
 
 
 MessageDispatcher::MessageDispatcher(GameServer& gameServer) :
-	m_Server(gameServer)
+	m_Server(gameServer), m_bInitialized(true)
 {
-	m_bInitialized = true;
 }
 
 void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* message) {
@@ -128,6 +129,22 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 	case GameMessageType::C2S_ConnectRequest: {
 		ConnectRequestMessage* request = (ConnectRequestMessage*)message;
 		ConnectResponseMessage* response = (ConnectResponseMessage*)m_Server.m_Server.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_ConnectResponse);
+		
+		std::string playerName = (const char*)request->PlayerName;
+
+		bool bAlreadyConnected = false;
+		for (Player player : m_Server.m_PlayerList) {
+			if (player.GetClientIndex() == clientIndex) {
+				response->Status = ConnectionStatus::AlreadyConnected;
+				m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+				bAlreadyConnected = true;
+				break;
+			}
+		}
+		if (bAlreadyConnected) {
+			break;
+		}
+		
 
 		if (!m_Server.ValidatePlayerName(request->PlayerName)) {
 			response->Status = ConnectionStatus::InvalidPlayername;
@@ -147,11 +164,15 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 			break;
 		}
 
+		
+		
+
 		m_Server.m_PlayerList.push_back(Player(std::string(request->PlayerName), clientIndex, {}));
 		m_Server.m_PlayerList.back().SetConnected(true);
 
 		response->Status = ConnectionStatus::ConnectionOK;
 		m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+		std::cout << "[Server] Received conn pkt: " << playerName << std::endl;
 		break;
 	}
 	}

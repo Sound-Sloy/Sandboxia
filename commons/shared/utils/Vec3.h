@@ -1,5 +1,4 @@
 #pragma once
-#include <raylib.h>
 
 template <typename T>
 class Vec3
@@ -18,6 +17,17 @@ public:
 	constexpr void SetX(T x) { this->x = x; };
 	constexpr void SetY(T y) { this->y = y; };
 	constexpr void SetZ(T z) { this->z = z; };
+	
+	template <class C>
+	constexpr Vec3<C> As() {
+		return Vec3<C>{(C)x, (C)y, (C)z};
+	}
+
+	template <class C, class T>
+	constexpr C CastTo() {
+		return C {(T)x, (T)y, (T)z};
+	}
+
 public:
 	constexpr bool operator==(const Vec3& rhs) const
 	{
@@ -29,7 +39,7 @@ public:
 	}
 	constexpr Vec3 operator+(const Vec3& rhs) const
 	{
-		return { this->x + rhs.x, this->y + rhs.y, this->z + rhs.z };
+		return { (T)(this->x + rhs.x), (T)(this->y + rhs.y), (T)(this->z + rhs.z) };
 	}
 	constexpr Vec3 operator+(const T rhs) const
 	{
@@ -67,9 +77,6 @@ public:
 	{
 		return { this->x / rhs, this->y / rhs, this->z / rhs };
 	}
-	constexpr operator Vector3() const {
-		return { (float)x, (float)y, (float)z };
-	}
 	// Real modulo operator, returns natural numbers
 	constexpr Vec3 operator% (const T rhs) const {
 		return {
@@ -85,7 +92,6 @@ public:
 			(this->z % rhs.z) * ((this->z % rhs.z) >= 0) + (rhs.z + (this->z % rhs.z)) * !((this->z % rhs.z) >= 0)
 		};
 	}
-
 private:
 	T x;
 	T y;

@@ -2,8 +2,8 @@
 
 #include <FastNoise/FastNoise.h>
 #include "Chunk.h"
-#include "Vec2.h"
-#include "Vec3.h"
+#include <shared/utils/Vec2.h>
+#include <shared/utils/Vec3.h>
 
 class WorldGenerator {
 public:

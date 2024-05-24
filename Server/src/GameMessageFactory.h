@@ -36,6 +36,26 @@ public:
             break;
         }
 
+        case GameMessageType::C2S_ConnectRequest: {
+            message = YOJIMBO_NEW(allocator, ConnectRequestMessage);
+            if (!message) {
+                return nullptr;
+            }
+            SetMessageType(message, (int32_t)GameMessageType::C2S_ConnectRequest);
+            return message;
+            break;
+        }
+
+        case GameMessageType::S2C_ConnectResponse: {
+            message = YOJIMBO_NEW(allocator, ConnectResponseMessage);
+            if (!message) {
+                return nullptr;
+            }
+            SetMessageType(message, (int32_t)GameMessageType::S2C_ConnectResponse);
+            return message;
+            break;
+        }
+
         default: {
             return NULL;
         }

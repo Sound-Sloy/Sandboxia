@@ -9,6 +9,12 @@
 #include "Globals.h"
 #include "ScreenManager.h"
 
+
+#include <Server/src/GameAdapter.h>
+#include <Server/src/GameServer.h>
+#include "Client/GameClient.h"
+#include <thread>
+
 class GameApp
 {
 public:
@@ -25,4 +31,8 @@ private:
 	void Draw();
 
 	std::unique_ptr<ScreenManager> m_ScreenManager;
+
+	std::unique_ptr<GameClient> m_Client;
+
+	std::thread m_ServerThread;
 };

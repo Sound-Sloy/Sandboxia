@@ -15,7 +15,7 @@ yojimbo::MessageFactory* ClientAdapter::CreateMessageFactory(yojimbo::Allocator&
 void ClientAdapter::OnServerClientConnected(int32_t clientIndex) {
 	if (m_Client != nullptr) {
 		std::cout << "[WARNING] ClientAdapter::m_Client is not nullptr. This shouldnt happen ..." << std::endl;
-		//m_Client->HandleConnect(clientIndex);
+		//m_Client.HandleConnect(clientIndex);
 	}
 }
 
@@ -23,27 +23,42 @@ void ClientAdapter::OnServerClientConnected(int32_t clientIndex) {
 void ClientAdapter::OnServerClientDisconnected(int32_t clientIndex) {
 	if (m_Client != nullptr) {
 		std::cout << "[WARNING] ClientAdapter::m_Client is not nullptr. This shouldnt happen ..." << std::endl;
-		//m_Client->HandleDisconnect(clientIndex);
+		//m_Client.HandleDisconnect(clientIndex);
 	}
 }
 
 GameClient::GameClient(const yojimbo::Address& serverAddress) :
-	m_Client(yojimbo::GetDefaultAllocator(), yojimbo::Address("0.0.0.0"), m_ConnectionConfig, *m_Adapter, 0.0),
-	m_Dispatcher(std::make_unique<ClientMessageDispatcher>(ClientMessageDispatcher(*this)))
+	m_Adapter(std::make_unique<ClientAdapter>(ClientAdapter(this))),
+	m_Client(yojimbo::GetDefaultAllocator(), yojimbo::Address("0.0.0.0"), m_ConnectionConfig, *m_Adapter, m_Time),
+	m_Dispatcher(std::make_unique<ClientMessageDispatcher>(*this))
 {
 	uint64_t clientId;
 	yojimbo_random_bytes((uint8_t*)&clientId, 8);
 	m_Client.InsecureConnect(DEFAULT_PRIVATE_KEY, clientId, serverAddress);
 }
 
-void GameClient::Update(float deltaTime)
+void GameClient::Update(double deltaTime)
 {
 	// update client
-	m_Client.AdvanceTime(m_Client.GetTime() + deltaTime);
+	//std::cout << "[Client] m_Time = " << m_Time << std::endl;
+	
 	m_Client.ReceivePackets();
 
+	if (m_Client.IsConnecting()) {
+		if ((int32_t)(m_Time * 10) % 10 == 0) std::cout << "Connecting... " << m_Time << std::endl;
+	}
 	if (m_Client.IsConnected()) {
 		SendMsgsToClientDispatcher();
+
+		if (!m_bSentConnReq) {
+			ConnectRequestMessage* request = (ConnectRequestMessage*)m_Client.CreateMessage((int32_t)GameMessageType::C2S_ConnectRequest);
+			request->ClientVersion = 0;
+			std::string playerName = "TestPlayer";
+			strncpy_s(request->PlayerName, sizeof(request->PlayerName), playerName.c_str(), playerName.size());
+			m_Client.SendMessage((int32_t)GameChannel::RELIABLE, request);
+
+			m_bSentConnReq = true;
+		}
 
 		// ... do connected stuff ...
 
@@ -55,16 +70,16 @@ void GameClient::Update(float deltaTime)
 			m_Client.SendMessage((int)GameChannel::RELIABLE, message);
 		}
 		*/
-		ConnectRequestMessage* request = (ConnectRequestMessage*)m_Client.CreateMessage((int32_t)GameMessageType::C2S_ConnectRequest);
-		request->ClientVersion = 0;
-		std::string playerName = "TestPlayer";
-		strncpy_s(request->PlayerName, sizeof(request->PlayerName), playerName.c_str(), playerName.size());
-		m_Client.SendMessage((int32_t)GameChannel::RELIABLE, request);
-		delete request;
-		request = nullptr;
+		
 	}
 
 	m_Client.SendPackets();
+
+	m_Time += deltaTime;
+	//m_Client.AdvanceTime(m_Client.GetTime() + deltaTime);
+	m_Client.AdvanceTime(m_Time);
+
+
 }
 
 void GameClient::SendMsgsToClientDispatcher() {
@@ -83,5 +98,7 @@ ClientMessageDispatcher::ClientMessageDispatcher(GameClient& gameClient) :
 {}
 
 void ClientMessageDispatcher::DispatchMessage(yojimbo::Message* message) {
-
+	if (message->GetType() == (int32_t)GameMessageType::S2C_ConnectResponse) {
+		std::cout << "[<] " << (int32_t)((ConnectResponseMessage*)message)->Status << std::endl;
+	}
 }

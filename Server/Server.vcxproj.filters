@@ -50,12 +50,6 @@
     <ClInclude Include="src\WorldGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Vec2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Messages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
