@@ -78,8 +78,26 @@ void GameClient::Update(double deltaTime)
 	m_Time += deltaTime;
 	//m_Client.AdvanceTime(m_Client.GetTime() + deltaTime);
 	m_Client.AdvanceTime(m_Time);
+}
 
+//TODO: Ask here for help
 
+std::shared_ptr<Chunk> GameClient::GetChunkFromQueue()
+{
+	if (m_ReceivedChunks.empty()) {
+		return nullptr;
+	}
+
+	std::shared_ptr<Chunk> chunk = std::move(m_ReceivedChunks.front());
+	m_ReceivedChunks.pop();
+	return chunk;
+}
+
+void GameClient::RequestChunk(Vec3<int32_t> chunkPos)
+{
+	ChunkDataRequest* request = (ChunkDataRequest*)m_Client.CreateMessage((int32_t)GameMessageType::C2S_ChunkDataRequest);
+	request->ChunkPos = chunkPos;
+	m_Client.SendMessage((int32_t)GameChannel::RELIABLE, request);
 }
 
 void GameClient::SendMsgsToClientDispatcher() {
@@ -100,5 +118,20 @@ ClientMessageDispatcher::ClientMessageDispatcher(GameClient& gameClient) :
 void ClientMessageDispatcher::DispatchMessage(yojimbo::Message* message) {
 	if (message->GetType() == (int32_t)GameMessageType::S2C_ConnectResponse) {
 		std::cout << "[<] " << (int32_t)((ConnectResponseMessage*)message)->Status << std::endl;
+	}
+
+	switch ((GameMessageType)message->GetType())
+	{
+	case GameMessageType::S2C_CompressedChunkDataResponse: {
+		ChunkDataResponse* response = (ChunkDataResponse*)message;
+		std::shared_ptr<CompressedChunk> compressedChunk = response->S2C_CompressedChunkData;
+		std::cout << "[Client] Received chunk Data: " << compressedChunk->Pos.GetX() << " " << compressedChunk->Pos.GetY() << " " << compressedChunk->Pos.GetZ() << "\n";
+
+		m_GameClient.m_ReceivedChunks.push(compressedChunk->ToChunk());
+		std::cout << "[Client] Pushed chunk to the chunk pool\n";
+		break;
+	}
+	default:
+		break;
 	}
 }

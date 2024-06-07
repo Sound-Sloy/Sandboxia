@@ -1,6 +1,8 @@
 #include "WorldGenerator.h"
 
-WorldGenerator::WorldGenerator() {
+WorldGenerator::WorldGenerator(int64_t seed) :
+	m_Seed(seed)
+{
 	m_FnSimplex = FastNoise::New<FastNoise::Simplex>();
 	m_FnFractal = FastNoise::New<FastNoise::FractalFBm>();
 	m_HeightNoise = FastNoise::New<FastNoise::FractalFBm>();
@@ -33,9 +35,10 @@ WorldGenerator::WorldGenerator() {
 	m_OffsetNoise->SetGain(1.f);
 }
 
-Chunk WorldGenerator::GenerateChunk(Vec2<int32_t> chunkPos) {
-	Chunk chunk;
-	chunk.SetPos(chunkPos);
+
+std::shared_ptr<Chunk> WorldGenerator::GenerateChunk(Vec3<int32_t> chunkPos) {
+	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
+	chunk->SetPos(chunkPos);
 	for (uint16_t eX = 0; eX < CHUNK_SIZE_VEC3.GetX(); ++eX) {
 		for (uint16_t eZ = 0; eZ < CHUNK_SIZE_VEC3.GetZ(); ++eZ) {
 			for (uint16_t eY = 0; eY < CHUNK_SIZE_VEC3.GetY(); ++eY) {
@@ -45,7 +48,7 @@ Chunk WorldGenerator::GenerateChunk(Vec2<int32_t> chunkPos) {
 #define BLOCK_CASE(BLOCKTYPE,BLOCKCLASS) { \
 			case ((Block_e)BLOCKTYPE): \
 			{ \
-				chunk.SetBlock({ eX,eY,eZ }, BLOCKCLASS()); \
+				chunk->SetBlock({ eX,eY,eZ }, BLOCKCLASS()); \
 				break; \
 			} \
 		}
@@ -86,7 +89,7 @@ Chunk WorldGenerator::GenerateChunk(Vec2<int32_t> chunkPos) {
 	return chunk;
 }
 
-Block_e WorldGenerator::GenerateBlockInChunk(Chunk& chunk, Vec3<int64_t> blockPos) {
+Block_e WorldGenerator::GenerateBlockInChunk(std::shared_ptr<const Chunk> chunk, Vec3<int64_t> blockPos) {
 	Block_e blockType = Block_e::AIR;
 
 	float nsCave = m_NoiseCave->GenSingle3D(blockPos.GetX() * 1.5f, blockPos.GetY() * 1.5f, blockPos.GetZ() * 1.5f, m_Seed);
@@ -108,7 +111,7 @@ Block_e WorldGenerator::GenerateBlockInChunk(Chunk& chunk, Vec3<int64_t> blockPo
 			blockType = Block_e::STONE; //Stone
 		}
 		else if (ny + 1 < ns) {
-			if (chunk.GetBlock(blockPos.As<uint16_t>() + Vec3<uint16_t>{0, 1, 0}).BlockType == Block_e::AIR) {
+			if (chunk->GetBlock(blockPos.As<uint16_t>() + Vec3<uint16_t>{0, 1, 0}).BlockType == Block_e::AIR) {
 			//if (chunk->data[(index + CHUNK_SIZE_XZ) % CHUNK_SIZE] == 0) {
 				blockType = Block_e::GRASS; //Grass
 			}

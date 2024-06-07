@@ -164,15 +164,27 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 			break;
 		}
 
-		
-		
-
 		m_Server.m_PlayerList.push_back(Player(std::string(request->PlayerName), clientIndex, {}));
 		m_Server.m_PlayerList.back().SetConnected(true);
 
 		response->Status = ConnectionStatus::ConnectionOK;
 		m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 		std::cout << "[Server] Received conn pkt: " << playerName << std::endl;
+		break;
+	}
+	case GameMessageType::C2S_ChunkDataRequest: {
+		ChunkDataRequest* request = (ChunkDataRequest*)message;
+		ChunkDataResponse* response = (ChunkDataResponse*)m_Server.m_Server.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_CompressedChunkDataResponse);
+		std::cout << "[Server] Received chunk Get request: " << request->ChunkPos.GetX() << " " << request->ChunkPos.GetY() << " " << request->ChunkPos.GetZ() << "\n";
+		std::shared_ptr<Chunk> chunkPtr = m_Server.m_World.GetChunkPtr(request->ChunkPos);
+		if (!chunkPtr) {
+			break;
+		}
+		response->S2C_CompressedChunkData = std::make_shared<CompressedChunk>();
+		response->S2C_CompressedChunkData->FromChunk(chunkPtr);
+
+		m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
+
 		break;
 	}
 	}

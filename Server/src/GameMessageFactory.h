@@ -26,8 +26,18 @@ public:
             break;
         }
 
+        case GameMessageType::C2S_ChunkDataRequest: {
+            message = YOJIMBO_NEW(allocator, ChunkDataRequest);
+            if (!message) {
+                return nullptr;
+            }
+            SetMessageType(message, (int32_t)GameMessageType::C2S_ChunkDataRequest);
+            return message;
+            break;
+        }
+
         case GameMessageType::S2C_CompressedChunkDataResponse: {
-            message = YOJIMBO_NEW(allocator, ChunkDataMessage);
+            message = YOJIMBO_NEW(allocator, ChunkDataResponse);
             if (!message) {
                 return nullptr;
             }

@@ -1,26 +1,26 @@
 #include "Game.h"
 
-
-
 GameApp::GameApp(int32_t width, int32_t height, std::string windowTitle)
 {
 	//LoadOptions();
 
 	assert(!GetWindowHandle());
-	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 	SetConfigFlags(ConfigFlags::FLAG_MSAA_4X_HINT);
 	SetConfigFlags(ConfigFlags::FLAG_WINDOW_RESIZABLE);
 	SetConfigFlags(ConfigFlags::FLAG_WINDOW_MAXIMIZED);
 	InitWindow(width, height, windowTitle.c_str());
+	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 	InitAudioDevice();
 	SetExitKey(KeyboardKey::KEY_NULL);
-
+	Logger::GetInstance().SetLogLevel(LogLevel::INFO);
+	Logger::GetInstance().SetOutputFile("./log.log");
 	Globals::Fonts::FontDefault = GetFontDefault();
 
-	Globals::KeyboardManager = Keyboard();
+	// not necessary
+	Keyboard::GetInstance();
+
 	Globals::SoundManagerInstance = std::make_unique<SoundManager>(SoundManager(Globals::Options, Globals::Sounds::MainTheme));
-	Globals::KeyboardManager = Keyboard();
-	m_ScreenManager = std::make_unique<ScreenManager>();
+	//GScreenManagerInstance = ScreenManager();
 
 	/*{
 		ResPacker::Loader loader("./assets.sndrpkg");
@@ -64,7 +64,11 @@ GameApp::GameApp(int32_t width, int32_t height, std::string windowTitle)
 		server->Run();
 		});
 	
-	m_Client = std::make_unique<GameClient>(yojimbo::Address(127, 0, 0, 1, 25565));
+	GGameClientInstance = std::make_unique<GameClient>(yojimbo::Address(127, 0, 0, 1, 25565));
+
+
+	GScreenManagerInstance.AddScreen(std::make_shared<MainMenuScreen>());
+	GScreenManagerInstance.AddScreen(std::make_shared<FPSOverlay>());
 }
 
 GameApp::~GameApp() noexcept
@@ -109,13 +113,12 @@ void GameApp::Update()
 {
 	float deltaTime = GetFrameTime();
 	Globals::SoundManagerInstance->Update();
-	m_ScreenManager->Update(deltaTime);
-
-	m_Client->Update(deltaTime);
+	GGameClientInstance->Update(deltaTime);
+	GScreenManagerInstance.Update(deltaTime);
 }
 
 void GameApp::Draw()
 {
 	ClearBackground(Globals::Colors::BackgroundColor);
-	m_ScreenManager->Draw();
+	GScreenManagerInstance.Draw();
 }

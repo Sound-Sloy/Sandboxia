@@ -1,9 +1,8 @@
 #pragma once
-#include "Keyboard.h"
 #include "SoundManager.h"
+#include "ScreenManager.h"
 
 namespace Globals {
-	inline Keyboard KeyboardManager;
 	inline std::unique_ptr<SoundManager> SoundManagerInstance;
 	inline Options_t Options;
 

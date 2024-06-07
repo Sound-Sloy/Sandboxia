@@ -14,10 +14,12 @@
 class Chunk {
 public:
 	void SetBlock(Vec3<uint16_t> blockPos, Block block);
+	void SetBlockAtIndex(uint32_t index, Block block);
 	Block GetBlock(Vec3<uint16_t> blockPos) const;
+	Block GetBlockByIndex(uint32_t index) const;
 
-	void SetPos(Vec2<int32_t> pos);
-	Vec2<int32_t> GetPos() const;
+	void SetPos(Vec3<int32_t> pos);
+	Vec3<int32_t> GetPos() const;
 
 	constexpr static uint32_t GetBlockIndexInChunk(Vec3<uint16_t> blockPos);
 	constexpr static Vec3<uint16_t> GetBlockPosInChunk(Vec3<int64_t> blockPos);
@@ -33,6 +35,6 @@ public:
 	}
 
 private:
-	Vec2<int32_t> m_Pos = { 0,0 };
+	Vec3<int32_t> m_Pos = { 0,0,0 };
 	Block m_Blocks[CHUNK_VOLUME]{};
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <yojimbo.h>
 #include "Chunk.h"
 #include "CompressedChunk.h"
 
@@ -27,20 +28,56 @@ public:
     };
 };
 
-class ChunkDataMessage : public yojimbo::BlockMessage
+class ChunkDataRequest : public yojimbo::Message
 {
 public:
-    CompressedChunk S2C_CompressedChunkDataResponse;
+    Vec3<int32_t> ChunkPos;
 
-    ChunkDataMessage() : S2C_CompressedChunkDataResponse() {}
+    ChunkDataRequest() : ChunkPos() {}
 
     template <typename Stream>
     bool Serialize(Stream& stream)
     {
-        //serialize_bits(stream, Sequence, 16);
-        serialize_object(stream, S2C_CompressedChunkDataResponse);
+        serialize_bytes(stream, (uint8_t*)&ChunkPos, sizeof(ChunkPos));
         return true;
     }
+
+    bool SerializeInternal(class yojimbo::ReadStream& stream) {
+        return Serialize(stream);
+    };
+    bool SerializeInternal(class yojimbo::WriteStream& stream) {
+        return Serialize(stream);
+    };
+    bool SerializeInternal(class yojimbo::MeasureStream& stream) {
+        return Serialize(stream);
+    };
+};
+
+class ChunkDataResponse : public yojimbo::Message
+{
+public:
+    //CompressedChunk S2C_CompressedChunkDataResponse;
+
+    //ChunkDataResponse() : S2C_CompressedChunkDataResponse() {}
+    std::shared_ptr<CompressedChunk> S2C_CompressedChunkData;
+    ChunkDataResponse() {}
+
+
+    template <typename Stream>
+    bool Serialize(Stream& stream)
+    {
+        if (Stream::IsWriting)
+        {
+            stream.SerializeBytes((uint8_t*)S2C_CompressedChunkData.get(), sizeof(CompressedChunk));
+        }
+        else
+        {
+            S2C_CompressedChunkData = std::make_shared<CompressedChunk>();
+            stream.SerializeBytes((uint8_t*)S2C_CompressedChunkData.get(), sizeof(CompressedChunk));
+        }
+        return true;
+    }
+
 
     bool SerializeInternal(class yojimbo::ReadStream& stream) {
         return Serialize(stream);

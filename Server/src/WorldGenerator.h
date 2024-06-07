@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <FastNoise/FastNoise.h>
 #include "Chunk.h"
 #include <shared/utils/Vec2.h>
@@ -7,8 +8,8 @@
 
 class WorldGenerator {
 public:
-	WorldGenerator();
-	Chunk GenerateChunk(Vec2<int32_t> chunkPos);
+	WorldGenerator(int64_t seed = 0);
+	std::shared_ptr<Chunk> GenerateChunk(Vec3<int32_t> chunkPos);
 private:
 	int64_t m_Seed = 0;
 	
@@ -20,6 +21,6 @@ private:
 	FastNoise::SmartNode<FastNoise::FractalFBm> m_OffsetNoise;
 	FastNoise::SmartNode<FastNoise::FractalFBm> m_RiverNoise;
 	
-	Block_e GenerateBlockInChunk(Chunk& chunk, Vec3<int64_t> blockPos);
+	Block_e GenerateBlockInChunk(std::shared_ptr<const Chunk> chunk, Vec3<int64_t> blockPos);
 
 };

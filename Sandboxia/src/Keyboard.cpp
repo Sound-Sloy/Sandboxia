@@ -24,6 +24,17 @@ KeyboardKey Keyboard::GetKeyPressed()
 	return KeyboardKey::KEY_NULL;
 }
 
+std::vector<KeyboardKey> Keyboard::GetKeysDown()
+{
+    std::vector<KeyboardKey> keys;
+    for (int32_t _ = 0; _ < 512; ++_) {
+        if (IsKeyDown(_)) {
+            keys.push_back((KeyboardKey)_);
+        }
+    }
+    return keys;
+}
+
 std::unordered_map<KeyboardKey, std::string> Keyboard::KeyNames = {
         {KeyboardKey::KEY_NULL , "None"},
         {KeyboardKey::KEY_APOSTROPHE , "'"},

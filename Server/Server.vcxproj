@@ -124,6 +124,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\build\yojimbo\bin\$(Platform)\$(Configuration)\;$(SolutionDir)\build\FastNoise\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>yojimbo.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)\build\yojimbo\bin\$(Platform)\$(Configuration)\;$(SolutionDir)\build\FastNoise\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -144,6 +147,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\build\yojimbo\bin\$(Platform)\$(Configuration)\;$(SolutionDir)\build\FastNoise\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>yojimbo.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)\build\yojimbo\bin\$(Platform)\$(Configuration)\;$(SolutionDir)\build\FastNoise\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\vendor\FastNoise2\FastNoise.vcxproj">
@@ -154,13 +160,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Block.cpp" />
     <ClCompile Include="src\Chunk.cpp" />
     <ClCompile Include="src\GameAdapter.cpp" />
     <ClCompile Include="src\GameServer.cpp" />
-    <ClCompile Include="src\MessageDispatcher.cpp" />
     <ClCompile Include="src\NetworkString.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Server.cpp" />
+    <ClCompile Include="src\World.cpp" />
     <ClCompile Include="src\WorldGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,10 +179,10 @@
     <ClInclude Include="src\GameAdapter.h" />
     <ClInclude Include="src\GameMessageFactory.h" />
     <ClInclude Include="src\GameServer.h" />
-    <ClInclude Include="src\MessageDispatcher.h" />
     <ClInclude Include="src\Messages.h" />
     <ClInclude Include="src\NetworkString.h" />
     <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\World.h" />
     <ClInclude Include="src\WorldGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

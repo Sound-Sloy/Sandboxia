@@ -33,5 +33,7 @@ struct GameConnectionConfig : yojimbo::ClientServerConfig {
         numChannels = 2;
         channel[(int32_t)GameChannel::RELIABLE].type = yojimbo::CHANNEL_TYPE_RELIABLE_ORDERED;
         channel[(int32_t)GameChannel::UNRELIABLE].type = yojimbo::CHANNEL_TYPE_UNRELIABLE_UNORDERED;
+        maxPacketSize = 256 * 1024;
+        maxPacketFragments = 256;
     }
 };

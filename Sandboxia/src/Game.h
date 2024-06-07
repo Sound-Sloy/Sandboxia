@@ -8,12 +8,17 @@
 
 #include "Globals.h"
 #include "ScreenManager.h"
+#include "MainMenuScreen.h"
+#include "FPSOverlay.h"
 
+#include "Keyboard.h"
 
 #include <Server/src/GameAdapter.h>
 #include <Server/src/GameServer.h>
 #include "Client/GameClient.h"
 #include <thread>
+
+#include <commons/shared/Logging/Logging.hpp>
 
 class GameApp
 {
@@ -29,10 +34,6 @@ public:
 private:
 	void Update();
 	void Draw();
-
-	std::unique_ptr<ScreenManager> m_ScreenManager;
-
-	std::unique_ptr<GameClient> m_Client;
 
 	std::thread m_ServerThread;
 };

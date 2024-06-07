@@ -5,6 +5,7 @@
 #include <yojimbo.h>
 #include "CSShared.h"
 #include "Player.h"
+#include "World.h"
 
 class GameAdapter;
 
@@ -31,6 +32,8 @@ private:
     static const uint32_t REQUIRED_CLIENT_VERSION = 0;
 
     std::vector<Player> m_PlayerList;
+
+    World m_World;
 
     bool m_bRunning = true;
     double m_Time = 0.f;

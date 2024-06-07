@@ -31,6 +31,36 @@ enum class BlockOrientation : uint8_t {
 	BOTTOM
 };
 
+struct LightData {
+public:
+	LightData() = default;
+	LightData(uint8_t skylight, uint8_t blocklight) {
+		SetSkyLight(skylight);
+		SetBlockLight(blocklight);
+	}
+
+	uint8_t GetBlockLight() {
+		return m_Data & 0xF;
+	}
+
+	uint8_t GetSkyLight() {
+		return m_Data >> 4;
+	}
+
+	void SetBlockLight(uint8_t level) {
+		m_Data |= level;
+	}
+
+	void SetSkyLight(uint8_t level) {
+		m_Data |= (level << 4);
+	}
+private:
+	/// <summary>
+	/// First 4 bits=skylight,next 4 bits=blocklight
+	/// </summary>
+	uint8_t m_Data = 0;
+};
+
 class Block {
 public:
 	Block_e BlockType = Block_e::AIR;
@@ -41,6 +71,7 @@ public:
 	float JumpVelocityMultiplier = 1.f;
 	float Resistance = 0.f;
 	BlockOrientation Orientation = BlockOrientation::NONE;
+	LightData Light;
 
 	bool HasFlag(BlockFlags_e flag) {
 		return (bool)((uint16_t)Flags & (uint16_t)flag);
@@ -48,6 +79,8 @@ public:
 	void SetFlag(BlockFlags_e flag, bool state) {
 		this->Flags = state ? (uint16_t)this->Flags | (uint16_t)flag : (uint16_t)this->Flags & ~(uint16_t)(flag);
 	}
+
+	static Block FromType(Block_e blockType);
 };
 
 //class Block : public Block {
