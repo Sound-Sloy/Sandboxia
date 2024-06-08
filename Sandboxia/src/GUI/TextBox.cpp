@@ -66,6 +66,25 @@ void TextBox::Update(float deltaTime) {
 				textWidth = meas1.x - meas2.x;
 			}
 
+			{
+				Vector2 renderTextWidth = MeasureTextEx(
+					*m_Properties.Font, 
+					m_Text.c_str() + m_TextIndexOffset, 
+					m_Properties.FontSize, 
+					m_Properties.FontSpacing);
+
+				m_TextIndexOffsetUpper = m_Text.length() - 1;
+				while (renderTextWidth.x > m_TextAreaSize.GetX()) {
+					if (m_TextIndexOffsetUpper < m_TextIndexOffset) {
+						break;
+					}
+					m_TextIndexOffsetUpper--;
+					renderTextWidth = MeasureTextEx(*m_Properties.Font, m_Text.substr(m_TextIndexOffset, m_TextIndexOffsetUpper - m_TextIndexOffset + 1).c_str(), m_Properties.FontSize, m_Properties.FontSpacing);
+				}
+			}
+
+
+
 			int charPressed = GetCharPressed();       // Get Unicode codepoint
 			//if (multiline && IsKeyPressed(KEY_ENTER)) codepoint = (int)'\n';
 
@@ -76,7 +95,14 @@ void TextBox::Update(float deltaTime) {
 			// Add codepoint to text, at current cursor position
 			// NOTE: Make sure we do not overflow buffer size
 			if (charPressed >= 32 and (textLen <= m_Properties.MaxChars or m_Properties.MaxChars == 0)) {
-				m_Text.insert(m_Text.begin() + m_CursorIndex, charPressed);
+				if (m_Properties.MaskChar != '\0') {
+					// If masking is enabled
+					m_Text.insert(m_Text.begin() + m_CursorIndex, m_Properties.MaskChar);
+					m_TextWhenMasked.insert(m_TextWhenMasked.begin() + m_CursorIndex, charPressed);
+				}
+				else {
+					m_Text.insert(m_Text.begin() + m_CursorIndex, charPressed);
+				}
 				m_CursorIndex++;
 				textLen++;
 			}
@@ -98,6 +124,10 @@ void TextBox::Update(float deltaTime) {
 
 				if (IsKeyPressed(KEY_DELETE) || (m_AutoCursorDelayCounter % AutoCursorDelay) == 0)      // Delay every movement some frames
 				{
+					if (m_Properties.MaskChar != '\0') {
+						// If masking is enabled
+						m_TextWhenMasked.erase(m_TextWhenMasked.begin() + m_CursorIndex);
+					}
 					m_Text.erase(m_Text.begin() + m_CursorIndex);
 
 					textLen--;
@@ -115,6 +145,10 @@ void TextBox::Update(float deltaTime) {
 				{
 					// Move backward text from cursor position
 					if (m_CursorIndex > 0) {
+						if (m_Properties.MaskChar != '\0') {
+							// If masking is enabled
+							m_TextWhenMasked.erase(m_TextWhenMasked.begin() + m_CursorIndex - 1);
+						}
 						m_Text.erase(m_Text.begin() + m_CursorIndex - 1);
 					}
 
@@ -246,7 +280,22 @@ void TextBox::Draw() {
 
 	// Draw text considering index offset if required
 	// NOTE: Text index offset depends on cursor position
-	DrawTextEx(*m_Properties.Font, m_Text.c_str() + m_TextIndexOffset, { m_TextAreaBounds.x, m_TextAreaBounds.y}, m_Properties.FontSize, m_Properties.FontSpacing, m_Properties.ForegroundColor);
+	if (m_Text.empty()) {
+		DrawTextEx(
+			*m_Properties.Font,
+			m_PlaceholderText.c_str(), 
+			{ m_TextAreaBounds.x, m_TextAreaBounds.y }, 
+			m_Properties.FontSize, m_Properties.FontSpacing, 
+			m_Properties.PlaceholderColor);
+	}
+	else {
+		DrawTextEx(
+			*m_Properties.Font, 
+			m_Text.substr(m_TextIndexOffset, m_TextIndexOffsetUpper - m_TextIndexOffset + 1).c_str(),
+			{ m_TextAreaBounds.x, m_TextAreaBounds.y}, 
+			m_Properties.FontSize, m_Properties.FontSpacing, 
+			m_Properties.ForegroundColor);
+	}
 
 
 	DrawCursor();
@@ -259,17 +308,11 @@ void TextBox::Draw() {
 	}
 
 	return;
-	DrawRectangleRoundedLines({ (float)m_Pos.GetX(), (float)m_Pos.GetY(), (float)m_Size.GetX(), (float)m_Size.GetY() }, m_Properties.BorderRoundness, m_Properties.BorderSegments, m_Properties.BorderSize, m_Properties.BorderColor);
-	//DrawRectangleRounded(, m_Properties.BorderRoundness, m_Properties.BorderSegments, m_Properties.ForegroundColor);
-	DrawRectangleRounded({ (float)m_Pos.GetX() + m_Properties.BorderSize, (float)m_Pos.GetY() + m_Properties.BorderSize, (float)m_Size.GetX() - 2 * m_Properties.BorderSize, (float)m_Size.GetY() - 2 * m_Properties.BorderSize }, m_Properties.BorderRoundness, m_Properties.BorderSegments, m_Properties.BackgroundColor);
-
-	//DrawTextEx(*m_Properties.Font, m_Text.c_str(), m_TextPos.CastAs<Vector2, float>(), m_Properties.FontSize, m_Properties.FontSpacing, m_Properties.ForegroundColor);
 }
 
 void TextBox::DrawHoverEffect() {
 	DrawRectangleRounded({ (float)m_Pos.GetX(), (float)m_Pos.GetY(), (float)m_Size.GetX(), (float)m_Size.GetY() },
 		m_Properties.BorderRoundness, m_Properties.BorderSegments, m_Properties.HoverColor);
-
 }
 
 void TextBox::DrawClickEffect() {

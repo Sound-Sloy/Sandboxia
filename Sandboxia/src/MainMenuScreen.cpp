@@ -6,12 +6,16 @@ MainMenuScreen::MainMenuScreen() :
 	ButtonProperties properties = {
 
 	};
-	m_ConnectButton = std::make_unique<Button>(Vec2{GetRenderWidth() / 2 - 75, GetRenderHeight() / 2 - 30}, Vec2{150,60}, "Connect", properties);
+	m_ConnectButton = std::make_unique<Button>(Vec2{GetRenderWidth() / 2 - 75, GetRenderHeight() / 2 + 50}, Vec2{150,60}, "Connect", properties);
 
 	TextBoxProperties textboxProps;
 	textboxProps.FontSize = 24.f;
+	textboxProps.BackgroundColor = DARKGRAY;
+	textboxProps.ForegroundColor = WHITE;
+	textboxProps.BorderColor = BLACK;
+	textboxProps.BorderRoundness = 0.f;
 	
-	m_TextBox = TextBox(Vec2{ 150,150 }, Vec2{200,50}, "none", textboxProps);
+	m_TextBox = TextBox(Vec2{ GetRenderWidth() / 2 - 150, GetRenderHeight() / 2 - 20 }, Vec2{300,40}, "Server Address", textboxProps);
 }
 
 void MainMenuScreen::Update(float deltaTime)

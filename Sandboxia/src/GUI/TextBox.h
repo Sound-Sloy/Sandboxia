@@ -22,6 +22,9 @@ struct TextBoxProperties {
 
 	// Set to 0 for no char limit
 	int32_t MaxChars = 128;
+	// Set to '\0' for no masking (default).
+	char MaskChar = '\0';
+
 	Color ForegroundColor = WHITE;
 	Color PlaceholderColor = LIGHTGRAY;
 	Color BackgroundColor = Color(0.f, 0.f, 0.f, 0.f);
@@ -55,7 +58,8 @@ private:
 	Rectangle m_TextAreaBounds = { 0,0,0,0 };
 	Rectangle m_TextboxBounds = { 0,0,0,0 };
 	std::string m_PlaceholderText = "Placeholder";
-	std::string m_Text = "";
+	std::string m_Text = ""; // Normal text. Becomes masked text when masking is enabled
+	std::string m_TextWhenMasked = ""; // Empty. Becomes normal text when masking is enabled
 	Vec2<int32_t> m_CursorPos = { 0,0 };
 
 	static const int32_t AutoCursorCooldown = 40;
@@ -70,6 +74,7 @@ private:
 
 	// Text index offset to start drawing in the box
 	int32_t m_TextIndexOffset = 0;
+	int32_t m_TextIndexOffsetUpper = 0;
 
 
 	bool m_bEnabled = true;
