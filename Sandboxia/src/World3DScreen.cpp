@@ -13,7 +13,7 @@ void World3DScreen::Update(float deltaTime)
 	}
 
 	for (auto& chunk : m_Chunks) {
-		if (!chunk.Mesh) {
+		if (!chunk.bMeshed) {
 			chunk.Mesh = GMesher.MeshChunk(chunk);
 			chunk.bMeshed = true;
 		}

@@ -16,7 +16,7 @@
 class Mesher {
 public:
 	Mesher() = default;
-	std::shared_ptr<ChunkMesh> MeshChunk(ClientChunk chunk);
+	ChunkMesh MeshChunk(ClientChunk chunk);
 	void Upload(ClientChunk& chunk);
 	void Unload(ClientChunk& chunk);
 private:
@@ -26,7 +26,7 @@ private:
 		Vec2<float>& uv0, Vec2<float>& uv1, Vec2<float>& uv2, Vec2<float>& uv3,
 		uint16_t textureIndex, uint8_t ambientOcclusion);
 
-	std::vector<std::shared_ptr<ChunkMesh>> m_MeshPool;
+	std::vector<ChunkMesh> m_MeshPool;
 
 	inline static uint32_t MaxChunkMeshVertexBuffers = 2;
 };

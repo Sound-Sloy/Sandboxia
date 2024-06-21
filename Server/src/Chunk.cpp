@@ -2,9 +2,7 @@
 
 Chunk::Chunk()
 {
-	if (m_Blocks == nullptr) {
-		//m_Blocks = new Block[CHUNK_VOLUME]{Block()};
-	}
+	m_Blocks.resize(CHUNK_VOLUME);
 }
 
 void Chunk::SetBlock(Vec3<uint16_t> blockPos, Block block) {
@@ -13,17 +11,18 @@ void Chunk::SetBlock(Vec3<uint16_t> blockPos, Block block) {
 
 void Chunk::SetBlockAtIndex(uint32_t index, Block block)
 {
-	if (index < CHUNK_VOLUME and index >= 0) {
+	if (index < m_Blocks.size() and index >= 0) {
 		m_Blocks[index] = block;
 	}
 }
 
 Block Chunk::GetBlock(Vec3<uint16_t> blockPos) const {
-	printf("[m_Blocks[%d]]\n\n\n", GetBlockIndexInChunk(blockPos));
-	if (m_Blocks == nullptr) {
-		return Block();
+	//printf("[m_Blocks[%d]]\n\n\n", GetBlockIndexInChunk(blockPos));
+	if (blockPos.GetX() < 32 and blockPos.GetY() < 32 and blockPos.GetZ() < 32) {
+		return m_Blocks[GetBlockIndexInChunk(blockPos)];
 	}
-	return m_Blocks[GetBlockIndexInChunk(blockPos)];
+	printf("Failed Chunk::GetBlock(Vec3<uint16_t>)\n");
+	return Block::FromType(Block_e::AIR);
 }
 
 Block Chunk::GetBlockByIndex(uint32_t index) const

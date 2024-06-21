@@ -39,13 +39,21 @@ public:
 	template <typename Stream>
 	bool Serialize(Stream& stream)
 	{
+		/*serialize_bytes(stream, m_Pos, sizeof(m_Pos));
+		serialize_bytes(stream, m_Blocks , sizeof(CHUNK_VOLUME * sizeof(Block)));*/
+
 		serialize_bytes(stream, m_Pos, sizeof(m_Pos));
-		serialize_bytes(stream, m_Blocks , sizeof(CHUNK_VOLUME * sizeof(Block)));
+		uint32_t size = static_cast<uint32_t>(m_Blocks.size()) * sizeof(Block);
+		serialize_uint32(stream, size);
+		if (Stream::IsReading) {
+			m_Blocks.resize(CHUNK_VOLUME);
+		}
+		serialize_bytes(stream, m_Blocks.data(), size);
 		return true;
 	}
 
 private:
 	Vec3<int32_t> m_Pos = { 0,0,0 };
-	//Block* m_Blocks = nullptr;
-	Block m_Blocks[CHUNK_VOLUME];
+	
+	std::vector<Block> m_Blocks = std::vector<Block>(CHUNK_VOLUME);
 };

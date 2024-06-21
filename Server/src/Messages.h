@@ -59,7 +59,7 @@ public:
     //CompressedChunk S2C_CompressedChunkDataResponse;
 
     //ChunkDataResponse() : S2C_CompressedChunkDataResponse() {}
-    std::shared_ptr<CompressedChunk> S2C_CompressedChunkData;
+    CompressedChunk S2C_CompressedChunkData = CompressedChunk();
     ChunkDataResponse() {}
 
 
@@ -68,12 +68,12 @@ public:
     {
         if (Stream::IsWriting)
         {
-            stream.SerializeBytes((uint8_t*)S2C_CompressedChunkData.get(), sizeof(CompressedChunk));
+            stream.SerializeBytes((uint8_t*)&S2C_CompressedChunkData, sizeof(CompressedChunk));
         }
         else
         {
-            S2C_CompressedChunkData = std::make_shared<CompressedChunk>();
-            stream.SerializeBytes((uint8_t*)S2C_CompressedChunkData.get(), sizeof(CompressedChunk));
+            S2C_CompressedChunkData = CompressedChunk();
+            stream.SerializeBytes((uint8_t*)&S2C_CompressedChunkData, sizeof(CompressedChunk));
         }
         return true;
     }

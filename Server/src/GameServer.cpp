@@ -176,12 +176,12 @@ void MessageDispatcher::DispatchMessage(uint32_t clientIndex, yojimbo::Message* 
 		ChunkDataRequest* request = (ChunkDataRequest*)message;
 		ChunkDataResponse* response = (ChunkDataResponse*)m_Server.m_Server.CreateMessage(clientIndex, (int32_t)GameMessageType::S2C_CompressedChunkDataResponse);
 		std::cout << "[Server] Received chunk Get request: " << request->ChunkPos.GetX() << " " << request->ChunkPos.GetY() << " " << request->ChunkPos.GetZ() << "\n";
-		std::shared_ptr<Chunk> chunkPtr = m_Server.m_World.GetChunkPtr(request->ChunkPos);
-		if (!chunkPtr) {
+		Chunk chunk = m_Server.m_World.GetChunk(request->ChunkPos);
+		/*if (!chunk) {
 			break;
-		}
-		response->S2C_CompressedChunkData = std::make_shared<CompressedChunk>();
-		response->S2C_CompressedChunkData->FromChunk(chunkPtr);
+		}*/
+		response->S2C_CompressedChunkData = CompressedChunk();
+		response->S2C_CompressedChunkData.FromChunk(chunk);
 
 		m_Server.m_Server.SendMessage(clientIndex, (int32_t)GameChannel::RELIABLE, response);
 

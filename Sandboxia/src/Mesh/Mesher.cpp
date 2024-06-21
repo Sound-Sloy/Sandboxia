@@ -34,22 +34,22 @@
 //}
 
 void Mesher::Upload(ClientChunk& chunk) {
-    chunk.Mesh->vaoId = rlLoadVertexArray();
-    rlEnableVertexArray(chunk.Mesh->vaoId);
+    chunk.Mesh.vaoId = rlLoadVertexArray();
+    rlEnableVertexArray(chunk.Mesh.vaoId);
 
-    chunk.Mesh->vboId = new uint32_t[Mesher::MaxChunkMeshVertexBuffers];  // Assuming 0 for vertex buffer, 1 for index buffer
-    glGenBuffers(Mesher::MaxChunkMeshVertexBuffers, chunk.Mesh->vboId);
-    chunk.Mesh->vboId[0] = rlLoadVertexBuffer(chunk.Mesh->Vertices.data(), chunk.Mesh->VertexCount * sizeof(Vertex), false);
+    chunk.Mesh.vboId = new uint32_t[Mesher::MaxChunkMeshVertexBuffers];  // Assuming 0 for vertex buffer, 1 for index buffer
+    glGenBuffers(Mesher::MaxChunkMeshVertexBuffers, chunk.Mesh.vboId);
+    chunk.Mesh.vboId[0] = rlLoadVertexBuffer(chunk.Mesh.Vertices.data(), chunk.Mesh.VertexCount * sizeof(Vertex), false);
 
     
 
     // Vertex Buffer
-    glBindBuffer(GL_ARRAY_BUFFER, chunk.Mesh->vboId[0]);
-    glBufferData(GL_ARRAY_BUFFER, chunk.Mesh->Vertices.size() * sizeof(Vertex), chunk.Mesh->Vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, chunk.Mesh.vboId[0]);
+    glBufferData(GL_ARRAY_BUFFER, chunk.Mesh.Vertices.size() * sizeof(Vertex), chunk.Mesh.Vertices.data(), GL_STATIC_DRAW);
 
     // Index Buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk.Mesh->vboId[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, chunk.Mesh->Indices.size() * sizeof(uint32_t), chunk.Mesh->Indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk.Mesh.vboId[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, chunk.Mesh.Indices.size() * sizeof(uint32_t), chunk.Mesh.Indices.data(), GL_STATIC_DRAW);
 
     // Define vertex attribute layout
     GLsizei stride = sizeof(Vertex);
@@ -92,10 +92,10 @@ void Mesher::Upload(ClientChunk& chunk) {
 
 void Mesher::Unload(ClientChunk& chunk)
 {
-    rlUnloadVertexArray(chunk.Mesh->vaoId);
-    for (int i = 0; i < Mesher::MaxChunkMeshVertexBuffers; i++) rlUnloadVertexBuffer(chunk.Mesh->vboId[i]);
+    rlUnloadVertexArray(chunk.Mesh.vaoId);
+    for (int i = 0; i < Mesher::MaxChunkMeshVertexBuffers; i++) rlUnloadVertexBuffer(chunk.Mesh.vboId[i]);
 
-    free(chunk.Mesh->vboId);
+    free(chunk.Mesh.vboId);
 }
 
 
@@ -122,7 +122,7 @@ void Mesher::AddFace(ChunkMesh& mesh,
     mesh.Indices.push_back(startIndex + 3);
 }
 
-std::shared_ptr<ChunkMesh> Mesher::MeshChunk(ClientChunk chunk) {
+ChunkMesh Mesher::MeshChunk(ClientChunk chunk) {
     Vec3<int32_t> directions[6] = {
         {1, 0, 0}, {-1, 0, 0},
         {0, 1, 0}, {0, -1, 0},
@@ -134,7 +134,7 @@ std::shared_ptr<ChunkMesh> Mesher::MeshChunk(ClientChunk chunk) {
     for (uint32_t x = 0; x < 32; ++x) {
         for (uint32_t y = 0; y < 32; ++y) {
             for (uint32_t z = 0; z < 32; ++z) {
-                if (chunk.Chunk->GetBlock(Vec3{ x,y,z }.As<uint16_t>()).HasFlag(BlockFlags_e::TRANSPARENT)) {
+                if (chunk.Chunk.GetBlock(Vec3{ x,y,z }.As<uint16_t>()).HasFlag(BlockFlags_e::TRANSPARENT)) {
                     continue;
                 }
 
@@ -145,7 +145,7 @@ std::shared_ptr<ChunkMesh> Mesher::MeshChunk(ClientChunk chunk) {
 
                     if (nx < 0 or ny < 0 or nz < 0 or 
                         nx >= 32 or ny >= 32 or nz >= 32 or 
-                        chunk.Chunk->GetBlock(Vec3{ nx,ny,nz }.As<uint16_t>()).HasFlag(BlockFlags_e::TRANSPARENT))
+                        chunk.Chunk.GetBlock(Vec3{ nx,ny,nz }.As<uint16_t>()).HasFlag(BlockFlags_e::TRANSPARENT))
                     {
                         //Vec3<float> v0, v1, v2, v3;
                         Vec3<uint32_t> v0, v1, v2, v3;
@@ -212,7 +212,6 @@ std::shared_ptr<ChunkMesh> Mesher::MeshChunk(ClientChunk chunk) {
             }
         }
     }
-    std::shared_ptr<ChunkMesh> meshPtr = std::make_shared<ChunkMesh>(mesh);
-    m_MeshPool.push_back(meshPtr);
-    return meshPtr;
+    m_MeshPool.push_back(mesh);
+    return mesh;
 }

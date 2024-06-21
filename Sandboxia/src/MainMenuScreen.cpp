@@ -30,7 +30,7 @@ void MainMenuScreen::Update(float deltaTime)
 		GGameClientInstance->RequestChunk({0,0,0});
 	}
 	ClientChunk chunk = GGameClientInstance->GetChunkFromQueue();
-	if (chunk.Chunk) {
+	if (chunk) {
 		Logger::GetInstance().Log(LogLevel::INFO, "[Client] Chunk received");
 
 	}

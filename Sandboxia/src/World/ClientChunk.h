@@ -4,14 +4,12 @@
 
 class ClientChunk {
 public:
-	ClientChunk() {
-		Chunk = nullptr;
-	}
-	operator bool() const {
-		return Chunk != nullptr;
+	operator bool() {
+		return bValid;
 	}
 
-	std::shared_ptr<Chunk> Chunk;
-	std::shared_ptr<ChunkMesh> Mesh;
+	Chunk Chunk;
+	ChunkMesh Mesh;
 	bool bMeshed = false;
+	bool bValid = false;
 };

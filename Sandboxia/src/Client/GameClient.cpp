@@ -88,7 +88,7 @@ ClientChunk GameClient::GetChunkFromQueue()
 		return ClientChunk();
 	}
 
-	ClientChunk chunk = std::move(m_ReceivedChunks.front());
+	ClientChunk chunk = m_ReceivedChunks.front();
 	m_ReceivedChunks.pop();
 	return chunk;
 }
@@ -124,13 +124,15 @@ void ClientMessageDispatcher::DispatchMessage(yojimbo::Message* message) {
 	{
 	case GameMessageType::S2C_CompressedChunkDataResponse: {
 		ChunkDataResponse* response = (ChunkDataResponse*)message;
-		std::shared_ptr<CompressedChunk> compressedChunk = response->S2C_CompressedChunkData;
-		std::cout << "[Client] Received chunk Data: " << compressedChunk->Pos.GetX() << " " << compressedChunk->Pos.GetY() << " " << compressedChunk->Pos.GetZ() << "\n";
+		CompressedChunk compressedChunk = response->S2C_CompressedChunkData;
+		std::cout << "[Client] Received chunk Data: " << compressedChunk.Pos.GetX() << " " << compressedChunk.Pos.GetY() << " " << compressedChunk.Pos.GetZ() << "\n";
 
-		ClientChunk chunk;
-		chunk.Chunk = compressedChunk->ToChunk();
+		ClientChunk chunk = ClientChunk();
+		chunk.Chunk = compressedChunk.ToChunk();
+		chunk.bValid = true;
 
-		if (chunk.Chunk) {
+		// TODO: Clean this up. Old code from std::shared_ptr<Chunk>
+		if (chunk.bValid) {
 			m_GameClient.m_ReceivedChunks.push(chunk);
 			Logger::GetInstance().Log(LogLevel::INFO, "[Client] Added chunk to the chunk pool");
 		}
