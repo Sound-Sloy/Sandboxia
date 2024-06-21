@@ -7,6 +7,7 @@
 #include "GUI/Button.h"
 #include "GUI/Text.h"
 #include "GUI/TextBox.h"
+#include "World3DScreen.h"
 
 class MainMenuScreen : public IScreen {
 public:

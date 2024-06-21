@@ -15,7 +15,6 @@ enum class TextBoxTextAlignment {
 };
 
 struct TextBoxProperties {
-	TextBoxTextAlignment TextAlignment = TextBoxTextAlignment::Center;
 	Font* Font = nullptr;
 	float FontSize = 16.f;
 	float FontSpacing = 1.f;
@@ -36,7 +35,7 @@ struct TextBoxProperties {
 	float BorderRoundness = 4.f;
 	int32_t BorderSegments = 4;
 	Vec2<int32_t> CursorSize = { 4, 24 };
-	int32_t CursorBlinkTime = 20;
+	int32_t CursorBlinkTime = 40;
 };
 
 class TextBox {

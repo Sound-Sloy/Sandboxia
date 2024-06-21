@@ -20,12 +20,12 @@ public:
 	
 	template <class C>
 	constexpr Vec3<C> As() {
-		return Vec3<C>{(C)x, (C)y, (C)z};
+		return Vec3<C>{(C)(x), (C)(y), (C)(z)};
 	}
 
 	template <class C, class T>
 	constexpr C CastTo() {
-		return C {(T)x, (T)y, (T)z};
+		return C {(T)(x), (T)(y), (T)(z)};
 	}
 
 public:

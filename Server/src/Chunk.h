@@ -13,6 +13,8 @@
 
 class Chunk {
 public:
+	Chunk();
+	virtual ~Chunk();
 	void SetBlock(Vec3<uint16_t> blockPos, Block block);
 	void SetBlockAtIndex(uint32_t index, Block block);
 	Block GetBlock(Vec3<uint16_t> blockPos) const;
@@ -21,8 +23,16 @@ public:
 	void SetPos(Vec3<int32_t> pos);
 	Vec3<int32_t> GetPos() const;
 
-	constexpr static uint32_t GetBlockIndexInChunk(Vec3<uint16_t> blockPos);
-	constexpr static Vec3<uint16_t> GetBlockPosInChunk(Vec3<int64_t> blockPos);
+	constexpr inline static uint32_t GetBlockIndexInChunk(Vec3<uint16_t> blockPos) {
+		return blockPos.GetX() + blockPos.GetZ() * CHUNK_SIZE_VEC3.GetZ() + blockPos.GetY() * CHUNK_SIZE_VEC3.GetY();
+	}
+	constexpr inline static Vec3<uint16_t> GetBlockPosInChunk(Vec3<int64_t> blockPos) {
+		return Vec3<uint16_t> {
+				(uint16_t)(blockPos.GetX() % CHUNK_SIZE_VEC3.GetX() >= 0 ? blockPos.GetX() % CHUNK_SIZE_VEC3.GetX() : CHUNK_SIZE_VEC3.GetX() + blockPos.GetX() % CHUNK_SIZE_VEC3.GetX()),
+				(uint16_t)(blockPos.GetY() % CHUNK_SIZE_VEC3.GetY() >= 0 ? blockPos.GetY() % CHUNK_SIZE_VEC3.GetY() : CHUNK_SIZE_VEC3.GetY() + blockPos.GetY() % CHUNK_SIZE_VEC3.GetY()),
+				(uint16_t)(blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ() >= 0 ? blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ() : CHUNK_SIZE_VEC3.GetZ() + blockPos.GetZ() % CHUNK_SIZE_VEC3.GetZ())
+		};
+	}
 
 	constexpr inline Vec2<int32_t> GetRegion() const;
 
@@ -30,11 +40,12 @@ public:
 	bool Serialize(Stream& stream)
 	{
 		serialize_bytes(stream, m_Pos, sizeof(m_Pos));
-		serialize_bytes(stream, m_Blocks , sizeof(m_Blocks));
+		serialize_bytes(stream, m_Blocks , sizeof(CHUNK_VOLUME * sizeof(Block)));
 		return true;
 	}
 
 private:
 	Vec3<int32_t> m_Pos = { 0,0,0 };
-	Block m_Blocks[CHUNK_VOLUME]{};
+	//Block* m_Blocks = nullptr;
+	Block m_Blocks[CHUNK_VOLUME];
 };

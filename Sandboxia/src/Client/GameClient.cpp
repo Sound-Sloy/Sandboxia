@@ -82,13 +82,13 @@ void GameClient::Update(double deltaTime)
 
 //TODO: Ask here for help
 
-std::shared_ptr<Chunk> GameClient::GetChunkFromQueue()
+ClientChunk GameClient::GetChunkFromQueue()
 {
 	if (m_ReceivedChunks.empty()) {
-		return nullptr;
+		return ClientChunk();
 	}
 
-	std::shared_ptr<Chunk> chunk = std::move(m_ReceivedChunks.front());
+	ClientChunk chunk = std::move(m_ReceivedChunks.front());
 	m_ReceivedChunks.pop();
 	return chunk;
 }
@@ -127,8 +127,16 @@ void ClientMessageDispatcher::DispatchMessage(yojimbo::Message* message) {
 		std::shared_ptr<CompressedChunk> compressedChunk = response->S2C_CompressedChunkData;
 		std::cout << "[Client] Received chunk Data: " << compressedChunk->Pos.GetX() << " " << compressedChunk->Pos.GetY() << " " << compressedChunk->Pos.GetZ() << "\n";
 
-		m_GameClient.m_ReceivedChunks.push(compressedChunk->ToChunk());
-		std::cout << "[Client] Pushed chunk to the chunk pool\n";
+		ClientChunk chunk;
+		chunk.Chunk = compressedChunk->ToChunk();
+
+		if (chunk.Chunk) {
+			m_GameClient.m_ReceivedChunks.push(chunk);
+			Logger::GetInstance().Log(LogLevel::INFO, "[Client] Added chunk to the chunk pool");
+		}
+		else {
+			Logger::GetInstance().Log(LogLevel::WARNING, "[Client] Failed to convert server-side chunk to client-side alternative");
+		}
 		break;
 	}
 	default:

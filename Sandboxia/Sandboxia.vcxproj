@@ -156,6 +156,8 @@
     <ClCompile Include="src\GUI\Text.cpp" />
     <ClCompile Include="src\GUI\TextBox.cpp" />
     <ClCompile Include="src\MainMenuScreen.cpp" />
+    <ClCompile Include="src\Mesh\Mesher.cpp" />
+    <ClCompile Include="src\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Sandboxia.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Keyboard.cpp" />
@@ -178,7 +180,10 @@
     <ClInclude Include="src\GUI\TextBox.h" />
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\MainMenuScreen.h" />
+    <ClInclude Include="src\Mesh\ChunkMesh.h" />
+    <ClInclude Include="src\Mesh\Mesher.h" />
     <ClInclude Include="src\Options.h" />
+    <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Screen.h" />
     <ClInclude Include="src\ScreenManager.h" />
     <ClInclude Include="src\ScreensEnum.h" />
@@ -186,6 +191,7 @@
     <ClInclude Include="src\States.h" />
     <ClInclude Include="src\Text.h" />
     <ClInclude Include="src\World3DScreen.h" />
+    <ClInclude Include="src\World\ClientChunk.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Server\Server.vcxproj">

@@ -3,6 +3,10 @@
 #include <yojimbo.h>
 #include <iostream>
 #include <queue>
+#include <memory>
+
+#include "../World/ClientChunk.h"
+#include <commons/shared/Logging/Logging.hpp>
 
 #include <Server/src/CSShared.h>
 #include <Server/src/GameMessageFactory.h>
@@ -28,7 +32,7 @@ public:
 
     void Update(double deltaTime);
 
-    std::shared_ptr<Chunk> GetChunkFromQueue();
+    ClientChunk GetChunkFromQueue();
     void RequestChunk(Vec3<int32_t> chunkPos);
 private:
     GameConnectionConfig m_ConnectionConfig;
@@ -37,7 +41,7 @@ private:
     std::unique_ptr<ClientMessageDispatcher> m_Dispatcher;
     static const uint8_t DEFAULT_PRIVATE_KEY[yojimbo::KeyBytes];
 
-    std::queue<std::shared_ptr<Chunk>> m_ReceivedChunks;
+    std::queue<ClientChunk> m_ReceivedChunks;
 
     double m_Time = 0.f;
     bool m_bSentConnReq = false;
@@ -56,4 +60,4 @@ private:
     GameClient& m_GameClient;
 };
 
-inline std::unique_ptr<GameClient> GGameClientInstance;
+inline std::shared_ptr<GameClient> GGameClientInstance;

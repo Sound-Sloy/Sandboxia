@@ -7,6 +7,10 @@ MainMenuScreen::MainMenuScreen() :
 
 	};
 	m_ConnectButton = std::make_unique<Button>(Vec2{GetRenderWidth() / 2 - 75, GetRenderHeight() / 2 + 50}, Vec2{150,60}, "Connect", properties);
+	m_ConnectButton->OnClick = []() {
+		GScreenManagerInstance.AddScreen(std::make_shared<World3DScreen>(World3DScreen()));
+		};
+
 
 	TextBoxProperties textboxProps;
 	textboxProps.FontSize = 24.f;
@@ -25,8 +29,8 @@ void MainMenuScreen::Update(float deltaTime)
 	if (IsKeyPressed(KeyboardKey::KEY_G)) {
 		GGameClientInstance->RequestChunk({0,0,0});
 	}
-	std::shared_ptr<Chunk> chunk = GGameClientInstance->GetChunkFromQueue();
-	if (chunk) {
+	ClientChunk chunk = GGameClientInstance->GetChunkFromQueue();
+	if (chunk.Chunk) {
 		Logger::GetInstance().Log(LogLevel::INFO, "[Client] Chunk received");
 
 	}

@@ -48,10 +48,12 @@ public:
 	}
 
 	void SetBlockLight(uint8_t level) {
+		m_Data &= 0b11110000;
 		m_Data |= level;
 	}
 
 	void SetSkyLight(uint8_t level) {
+		m_Data &= 0b00001111;
 		m_Data |= (level << 4);
 	}
 private:

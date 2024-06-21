@@ -25,6 +25,12 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{d276682b-f1db-4b1c-b7f9-332b04568c3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{542e4d51-4e7a-4c1c-b5a9-303b4459c5f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{b049ac46-8fa3-4ff0-9872-607edaef4a35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -60,9 +66,6 @@
     <ClCompile Include="src\FPSOverlay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\World3DScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI\Button.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -71,6 +74,15 @@
     </ClCompile>
     <ClCompile Include="src\GUI\TextBox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World3DScreen.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh\Mesher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Renderer.cpp">
+      <Filter>Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +145,18 @@
     </ClInclude>
     <ClInclude Include="src\GUI\TextBox.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\ClientChunk.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\Mesher.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\ChunkMesh.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
